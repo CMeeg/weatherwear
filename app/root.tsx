@@ -4,8 +4,8 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration,
-} from "@remix-run/react";
+  ScrollRestoration
+} from "@remix-run/react"
 
 export default function App() {
   return (
@@ -23,5 +23,5 @@ export default function App() {
         <LiveReload />
       </body>
     </html>
-  );
+  )
 }
