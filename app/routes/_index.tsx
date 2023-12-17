@@ -9,6 +9,10 @@ export const meta: MetaFunction = () => {
   ]
 }
 
+const formatContent = (content: string[]) => {
+  return content.join(" ")
+}
+
 export const loader = async () => {
   const location = "witney,uk"
   const lang = "en"
@@ -19,33 +23,36 @@ export const loader = async () => {
 
   const weather = await weatherResponse.json()
 
-  const temperatureUnit = "Celcius"
-  const subject = "male person"
-  const culture = "en-GB"
-
   const openai = new OpenAI({
     apiKey: import.meta.env.OPENAI_API_KEY
   })
+
+  const gender = "female"
+  const style = "casual"
+  const temperatureUnit = "Celcius"
+  const culture = "en-GB"
 
   const completion = await openai.chat.completions.create({
     messages: [
       {
         role: "system",
-        content: `You are helpful fashion assistant giving advice to a ${subject} on what to wear based on their current local weather. You will provide advice in their preferred language culture, which is ${culture}.`
+        content: formatContent([
+          "You are a helpful fashion assistant.",
+          "You are giving advice on what to wear based on the current local weather.",
+          "You keep your advice as concise as possible, 2-3 sentences at the most."
+        ])
       },
       {
         role: "user",
-        content: `Based the weather data below,
-give me suggestions on how warmly to dress,
-ie pants or shorts, a light jacket or a warm jacket,
-a scarf and gloves or not, if I should carry an umbrella, etc.
-In your response, use temperature data from the weather data below
-throughout the day to explain your recommendation.
-Be as concise as possible.
-Assume I'll wear the same thing the whole day.
-Do not use a bulleted list.
-Use 2-3 sentences.
-Only use ${temperatureUnit}.`.replaceAll("\n", " ")
+        content: formatContent([
+          "Based on the weather data below, give me suggestions on how warmly to dress, for example, wear jumper/t-shirt, trousers/shorts/skirt, a light or warm coat, a scarf and gloves, if I should carry an umbrella, etc.",
+          "In your response, use temperature data from the weather data below throughout the day to explain your recommendation.",
+          "Assume I'll wear the same outfit the whole day.",
+          `My gender is ${gender}.`,
+          `I like to dress in a ${style} style.`,
+          `Only use ${temperatureUnit}.`,
+          `Respond in my preferred language, which is ${culture}.`
+        ])
       },
       {
         role: "user",
@@ -58,15 +65,38 @@ Only use ${temperatureUnit}.`.replaceAll("\n", " ")
 
   const text = completion.choices[0].message.content
 
-  return { message: text }
+  const subject = "human"
+
+  const image = await openai.images.generate({
+    model: "dall-e-3",
+    prompt: formatContent([
+      "You have been given this description for what to wear today:",
+      text ?? "",
+      `The foreground of the image is an illustration of 1 ${gender} ${subject} who has dressed in a ${style} style matching the description.`,
+      "DO NOT include the weather description in the illustration.",
+      "There is NOTHING in the background of the image.",
+      `Include ONLY 1 ${subject} as the 1 and ONLY thing in the image.`,
+      "DO NOT include any other features, adornments or text in the illustration."
+    ]),
+    n: 1,
+    size: "1024x1024"
+  })
+
+  const image_url = image.data[0].url
+
+  return { text, image_url }
 }
 
 export default function Index() {
-  const { message } = useLoaderData<typeof loader>()
+  const { text, image_url } = useLoaderData<typeof loader>()
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <p>{message ?? "No response."}</p>
+      <p>
+        <img src={image_url} alt="" style={{ height: "80vh" }} />
+        <br />
+        {text ?? "No response."}
+      </p>
     </div>
   )
 }
