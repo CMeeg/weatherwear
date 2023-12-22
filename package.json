@@ -20,9 +20,11 @@
     "isbot": "^3.6.8",
     "openai": "^4.22.1",
     "react": "^18.2.0",
+    "react-aria-components": "^1.0.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@react-aria/optimize-locales-plugin": "^1.0.0",
     "@remix-run/dev": "^2.4.0",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",

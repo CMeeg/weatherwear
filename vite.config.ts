@@ -5,9 +5,15 @@ import { defineConfig } from "vite"
 // you've created an app from this template and this comment can be removed
 // eslint-disable-next-line import/no-unresolved
 import tsconfigPaths from "vite-tsconfig-paths"
+import localesPlugin from "@react-aria/optimize-locales-plugin"
 
 installGlobals()
 
 export default defineConfig({
-  plugins: [remix(), tsconfigPaths()]
+  plugins: [
+    remix(),
+    // Don't include any locale strings in the client JS bundle.
+    { ...localesPlugin.vite({ locales: [] }), enforce: "pre" },
+    tsconfigPaths()
+  ]
 })
