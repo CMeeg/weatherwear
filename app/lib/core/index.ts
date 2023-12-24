@@ -1,27 +1,25 @@
 type Nullable<T> = T | null | undefined
 
-interface FuncError<TError> {
+interface FuncError<T = unknown> {
   message: string
   code?: string
-  error?: TError | unknown
+  error?: T
 }
 
-type FuncResult<TData, TError> = [
-  TData | undefined,
-  FuncError<TError> | undefined
-]
+type OkFuncResult<T> = [T, undefined]
+type ErrorFuncResult<T> = [undefined, FuncError<T>]
+
+type FuncResult<TData, TError> = OkFuncResult<TData> | ErrorFuncResult<TError>
 
 interface FuncResultFactory {
-  ok: <TData>(data: TData) => FuncResult<TData, undefined>
-  error: <TError>(
-    err: FuncError<TError>
-  ) => FuncResult<undefined, FuncError<TError>>
+  ok: <T>(data: T) => OkFuncResult<T>
+  error: <T>(err: FuncError<T>) => ErrorFuncResult<T>
 }
 
 function createFuncResultFactory(): FuncResultFactory {
   return {
-    ok: (data) => [data, undefined],
-    error: (err) => [undefined, err]
+    ok: <T>(data: T): OkFuncResult<T> => [data, undefined],
+    error: <T>(err: FuncError<T>): ErrorFuncResult<T> => [undefined, err]
   }
 }
 

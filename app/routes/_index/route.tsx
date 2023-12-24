@@ -112,7 +112,7 @@ export default function Index() {
                 <ListBoxItem key="women" id="women">
                   Women
                 </ListBoxItem>
-                <ListBoxItem key="any" id="any">
+                <ListBoxItem key="men or women" id="men or women">
                   Men or Women
                 </ListBoxItem>
               </ListBox>

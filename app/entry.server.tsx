@@ -8,7 +8,7 @@ import { renderToPipeableStream } from "react-dom/server"
 import { getLocalizationScript } from "react-aria-components/i18n"
 import { defaultLocale } from "~/lib/i18n"
 
-const ABORT_DELAY = 5_000
+const ABORT_DELAY = 30_000
 
 export default function handleRequest(
   request: Request,

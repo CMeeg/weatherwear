@@ -1,4 +1,5 @@
 interface Locale {
+  // TODO: Is there a more specific type to use for culture?
   culture: string
 }
 
