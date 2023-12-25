@@ -54,8 +54,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
       // TODO: Check weather data `nearest_area` array and if more than one item allow the user to choose which one they want to use
 
-      console.log(forecast)
-
       return wearApi.fetchSuggestions(profile, forecast)
     })
     .then(([suggestions, suggestionsError]) => {
@@ -108,10 +106,16 @@ export default function Index() {
 
       {/* TODO: Stream results:
       https://www.jacobparis.com/content/remix-defer-streaming-progress
-      https://remix.run/docs/en/main/guides/streaming */}
+      https://remix.run/docs/en/main/guides/streaming
+      Need to take a look at Supabase real-time also */}
 
       <Suspense fallback={<p>Getting forecast...</p>}>
-        <Await resolve={weatherWear}>
+        <Await
+          resolve={weatherWear}
+          errorElement={
+            <p>Sorry, there was an error fetching your forecast.</p>
+          }
+        >
           {(weatherWear) => (
             <p>
               {weatherWear.image_url && (
