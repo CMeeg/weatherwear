@@ -4,4 +4,10 @@ interface WearProfile {
   style: string
 }
 
-export type { WearProfile }
+interface WearSuggestion {
+  advice: string
+  description: string
+  weather: string
+}
+
+export type { WearProfile, WearSuggestion }

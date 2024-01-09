@@ -2,12 +2,64 @@ import OpenAI from "openai"
 import { result } from "~/lib/core"
 import type { FuncResult } from "~/lib/core"
 import { defaultLocale } from "~/lib/i18n"
-import type { WearProfile } from "~/lib/wear"
+import type { WearProfile, WearSuggestion } from "~/lib/wear"
 import { temperatureUnit as tempUnit } from "~/lib/weather"
 import type { TemperatureUnit, WeatherForecast } from "~/lib/weather"
 
 const formatContent = (content: string[]) => {
   return content.join(" ")
+}
+
+const getForecastContent = (forecast: WeatherForecast): string => {
+  const forecastNearestArea = forecast.nearest_area?.[0]
+  const forecastWeather = forecast.weather?.[0]
+
+  if (!forecastNearestArea || !forecastWeather) {
+    return ""
+  }
+
+  const location = {
+    areaName: forecastNearestArea.areaName?.[0]?.value ?? "",
+    region: forecastNearestArea.region?.[0]?.value ?? "",
+    country: forecastNearestArea.country?.[0]?.value ?? ""
+  }
+
+  const weather = {
+    astronomy: forecastWeather.astronomy?.[0],
+    avgTempC: forecastWeather.avgtempC,
+    date: forecastWeather.date,
+    hourly: Array.isArray(forecastWeather.hourly)
+      ? forecastWeather.hourly.map((h) => {
+          return {
+            feelsLikeC: h.FeelsLikeC,
+            windchillC: h.WindChillC,
+            windGustKmph: h.WindGustKmph,
+            chanceOfFog: h.chanceoffog,
+            chanceOfFrost: h.chanceoffrost,
+            chanceOfHighTemp: h.chanceofhightemp,
+            chanceOfOvercast: h.chanceofovercast,
+            chanceOfRain: h.chanceofrain,
+            chanceOfRemainDry: h.chanceofremdry,
+            chanceOfSnow: h.chanceofsnow,
+            chanceOfSunshine: h.chanceofsunshine,
+            chanceOfThunder: h.chanceofthunder,
+            chanceOfWindy: h.chanceofwindy,
+            cloudCover: h.cloudcover,
+            humidity: h.humidity,
+            precipitationMM: h.precipMM,
+            pressure: h.pressure,
+            tempC: h.tempC,
+            time: h.time,
+            uvIndex: h.uvIndex,
+            visibilityKm: h.visibility,
+            weatherDesc: h.weatherDesc?.[0]?.value ?? "",
+            windspeedKmph: h.windspeedKmph
+          }
+        })
+      : []
+  }
+
+  return JSON.stringify({ location, weather })
 }
 
 interface WearApiOptions {
@@ -22,14 +74,16 @@ function createWearApi(options: WearApiOptions) {
   })
 
   return {
-    fetchSuggestions: (
+    fetchSuggestion: (
       profile: WearProfile,
       forecast: WeatherForecast,
       temperatureUnit?: TemperatureUnit,
       culture?: string
-    ): Promise<FuncResult<string, unknown>> => {
+    ): Promise<FuncResult<WearSuggestion, unknown>> => {
       const requestTemperatureUnit = temperatureUnit ?? tempUnit.celcius
       const requestCulture = culture ?? defaultLocale.culture
+
+      const forecastContent = getForecastContent(forecast)
 
       return openai.chat.completions
         .create({
@@ -37,31 +91,30 @@ function createWearApi(options: WearApiOptions) {
             {
               role: "system",
               content: formatContent([
-                "You are a helpful fashion assistant.",
-                "You are giving advice on what to wear based on the current local weather.",
-                "You keep your advice as concise as possible, 2-3 sentences at the most.",
-                `You reply in the user's preferred language, which is ${requestCulture}.`
+                "You are a helpful fashion assistant. You are giving advice on what to wear based on the current local weather.",
+                "You are informative in your advice, but as concise as possible providing 2-3 sentences at the most.",
+                "You separately provide a third-person objective description of a subject wearing the clothes that you have advised so that they can picture themselves wearing them, but as concise as possible and provided in 1 sentence.",
+                "You separately provide a brief summary of the day's weather in simple terms, but as concise as possible and provided in up to 10 words. You don't include the temperature or other figures in this weather summary, but you can in the advice above.",
+                `You reply in the user's preferred language, which is ${requestCulture}, and you format the output as JSON. You use a consistent JSON schema, which is as follows: { "advice": "string", "description": "string", "weather": "string" }`
               ])
             },
             {
               role: "user",
               content: formatContent([
                 "Based on the weather data below, give me suggestions on how warmly to dress, for example, wear a jumper/t-shirt, trousers/shorts/skirt, a light or warm coat, a scarf and gloves, if I should carry an umbrella, etc.",
-                "In your response, use temperature data from the weather data below throughout the day to explain your recommendation.",
-                "Assume I'll wear the same outfit the whole day.",
-                `I wear clothing typically made to fit ${profile.fit}.`,
-                `I like to dress in a ${profile.style} style.`,
-                `Only use ${requestTemperatureUnit}.`,
-                `Respond in my preferred language, which is ${requestCulture}.`
+                `In your response, use temperature data from the weather data below throughout the day to explain your recommendation. Only use ${requestTemperatureUnit}, and respond in my preferred language, which is ${requestCulture}.`,
+                `I wear clothing typically made to fit ${profile.fit}. I like to dress in a ${profile.style} style. Assume I'll wear the same outfit the whole day. I am a ${profile.subject}.`
               ])
             },
             {
               role: "user",
-              content: JSON.stringify(forecast)
+              content: forecastContent
             }
           ],
           model: "gpt-4-1106-preview",
-          max_tokens: 150
+          max_tokens: 150,
+          seed: 1001,
+          response_format: { type: "json_object" }
         })
         .then((completion) => {
           const content = completion.choices[0]?.message.content ?? ""
@@ -71,30 +124,44 @@ function createWearApi(options: WearApiOptions) {
             throw new Error("Completion returned with no content.")
           }
 
-          return result.ok(content)
+          // TODO: Validate if the content is valid JSON and has the expected schema
+          const suggestion = JSON.parse(content) as WearSuggestion
+
+          console.log(suggestion)
+
+          return result.ok(suggestion)
         })
         .catch((error) => {
+          console.log(error)
           return result.error({
             message: "Failed to fetch wear suggestions.",
             error
           })
         })
     },
-    generateImageFromSuggestions: (
+    generateImageFromSuggestion: (
       profile: WearProfile,
-      suggestions: string
+      suggestion: WearSuggestion
     ): Promise<FuncResult<string, unknown>> => {
+      const gender =
+        profile.fit === "men"
+          ? "male"
+          : profile.fit === "women"
+            ? "female"
+            : "non-binary"
+
       return openai.images
         .generate({
           model: "dall-e-3",
+          // prompt: formatContent([
+          //   `I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS: Full-body pose of ${profile.subject} dressed in clothes of a ${profile.style} style made to fit ${profile.fit}.`,
+          //   suggestion.description,
+          //   `In the background is a rural scene showing the following weather conditions: ${suggestion.weather}.`,
+          //   "Use a realistic modern anime style."
+          // ]),
           prompt: formatContent([
-            "You are dressing yourself based on the following suggestions:",
-            suggestions,
-            `In the foreground is a colourful cartoonish illustration of 1 ${profile.subject} dressed in ${profile.style} style clothes made for ${profile.fit}.`,
-            "DO NOT show the suggestions in the illustration.",
-            "There is NOTHING in the background.",
-            `Include ONLY 1 ${profile.subject} in the foreground of the image.`,
-            "DO NOT include any other features, adornments or text in the foreground or background."
+            `A colorful cartoonish illustration, in the foreground is 1 ${gender} ${profile.subject} dressed in ${profile.style} clothes, ${suggestion.description}`,
+            `In the background is a fun rural scene showing these weather conditions: ${suggestion.weather}`
           ]),
           n: 1,
           size: "1024x1024"
@@ -110,6 +177,7 @@ function createWearApi(options: WearApiOptions) {
           return result.ok(url)
         })
         .catch((error) => {
+          console.log(error)
           return result.error({
             message: "Failed to generate image from suggestions.",
             error

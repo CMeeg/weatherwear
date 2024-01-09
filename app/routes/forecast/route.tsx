@@ -54,17 +54,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
       // TODO: Check weather data `nearest_area` array and if more than one item allow the user to choose which one they want to use
 
-      return wearApi.fetchSuggestions(profile, forecast)
+      return wearApi.fetchSuggestion(profile, forecast)
     })
-    .then(([suggestions, suggestionsError]) => {
-      if (suggestionsError) {
+    .then(([suggestion, suggestionError]) => {
+      if (suggestionError) {
         // TODO: Deal with error
-        throw new Error(suggestionsError.message)
+        throw new Error(suggestionError.message)
       }
 
-      response.text = suggestions
+      response.text = suggestion.advice
 
-      return wearApi.generateImageFromSuggestions(profile, suggestions)
+      return wearApi.generateImageFromSuggestion(profile, suggestion)
     })
     .then(([imageUrl, imageError]) => {
       if (imageError) {
