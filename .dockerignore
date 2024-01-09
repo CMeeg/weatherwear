@@ -1,0 +1,13 @@
+.azd
+.git
+.github
+.vscode
+infra
+node_modules
+.dockerignore
+azure.yaml
+bicepconfig.json
+Dockerfile
+npm-debug.log
+README.md
+TODO.md

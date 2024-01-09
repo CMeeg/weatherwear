@@ -9,6 +9,8 @@
   "scripts": {
     "build": "remix vite:build",
     "dev": "node ./server.mjs",
+    "env:init": "pwsh ./.azd/scripts/create-env-local.ps1",
+    "env:dv": "pwsh ./.azd/scripts/read-domain-verification-vars.ps1",
     "lint": "eslint --ignore-path .eslintignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "cross-env NODE_ENV=production node ./server.mjs",
     "typecheck": "tsc"
