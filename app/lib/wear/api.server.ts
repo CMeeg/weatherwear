@@ -93,17 +93,17 @@ function createWearApi(options: WearApiOptions) {
               content: formatContent([
                 "You are a helpful fashion assistant. You are giving advice on what to wear based on the current local weather.",
                 "You are informative in your advice, but as concise as possible providing 2-3 sentences at the most.",
-                "You separately provide a third-person objective description of a subject wearing the clothes that you have advised so that they can picture themselves wearing them, but as concise as possible and provided in 1 sentence.",
-                "You separately provide a brief summary of the day's weather in simple terms, but as concise as possible and provided in up to 10 words. You don't include the temperature or other figures in this weather summary, but you can in the advice above.",
-                `You reply in the user's preferred language, which is ${requestCulture}, and you format the output as JSON. You use a consistent JSON schema, which is as follows: { "advice": "string", "description": "string", "weather": "string" }`
+                "You separately provide a third-person objective description of the subject wearing the clothes that you have advised so that they can picture themselves in them, but you are as concise as possible providing 1 sentence at the most.",
+                "You separately provide a brief summary of the day's weather using simple keywords, but you are as concise as possible providing 10 keywords at the most. You don't include the temperature or other numbers in this weather summary, but you can in the advice above.",
+                `You format the output as JSON. You use a consistent JSON schema, which is as follows: { "advice": "string", "description": "string", "weather": "string" }`
               ])
             },
             {
               role: "user",
               content: formatContent([
-                "Based on the weather data below, give me suggestions on how warmly to dress, for example, wear a jumper/t-shirt, trousers/shorts/skirt, a light or warm coat, a scarf and gloves, if I should carry an umbrella, etc.",
-                `In your response, use temperature data from the weather data below throughout the day to explain your recommendation. Only use ${requestTemperatureUnit}, and respond in my preferred language, which is ${requestCulture}.`,
-                `I wear clothing typically made to fit ${profile.fit}. I like to dress in a ${profile.style} style. Assume I'll wear the same outfit the whole day. I am a ${profile.subject}.`
+                "Based on the weather data below, give me suggestions on how warmly to dress, for example, wear a jumper or t-shirt, trousers, shorts or skirt, a light or warm coat, a scarf and gloves, if I should carry an umbrella, etc.",
+                `I wear clothing typically made to fit ${profile.fit}. I like to dress in a ${profile.style} style. Assume I'll wear the same outfit the whole day.`,
+                `In your response, use the hourly temperature data from the weather data below to explain your recommendation. Only use ${requestTemperatureUnit}, and respond in my preferred language, which is ${requestCulture}.`
               ])
             },
             {
@@ -143,13 +143,6 @@ function createWearApi(options: WearApiOptions) {
       profile: WearProfile,
       suggestion: WearSuggestion
     ): Promise<FuncResult<string, unknown>> => {
-      const gender =
-        profile.fit === "men"
-          ? "male"
-          : profile.fit === "women"
-            ? "female"
-            : "non-binary"
-
       return openai.images
         .generate({
           model: "dall-e-3",
@@ -160,8 +153,8 @@ function createWearApi(options: WearApiOptions) {
           //   "Use a realistic modern anime style."
           // ]),
           prompt: formatContent([
-            `A colorful cartoonish illustration, in the foreground is 1 ${gender} ${profile.subject} dressed in ${profile.style} clothes, ${suggestion.description}`,
-            `In the background is a fun rural scene showing these weather conditions: ${suggestion.weather}`
+            `A colorful illustration in an anime style, in the foreground is a full-body pose of a ${profile.subject} dressed in ${profile.style} clothes that have been made to fit ${profile.fit}, ${suggestion.description}`,
+            `In the background is a scene of ${suggestion.weather}`
           ]),
           n: 1,
           size: "1024x1024"
