@@ -5,8 +5,14 @@ import { createReadableStreamFromReadable } from "@remix-run/node"
 import { RemixServer } from "@remix-run/react"
 import isbot from "isbot"
 import { renderToPipeableStream } from "react-dom/server"
+import dotenv from "dotenv"
 import { getLocalizationScript } from "react-aria-components/i18n"
 import { defaultLocale } from "~/lib/i18n"
+
+// TODO: Is this really needed? If so, need to deal with dev/prod env vars too
+// See: https://github.com/remix-run/remix/discussions/7875
+dotenv.config()
+dotenv.config({ path: `.env.local`, override: true })
 
 const ABORT_DELAY = 30_000
 

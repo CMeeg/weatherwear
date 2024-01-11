@@ -8,7 +8,7 @@ const createWeatherApi = () => {
     fetchForecast: (
       location: string,
       culture?: string
-    ): Promise<FuncResult<WeatherForecast, unknown>> => {
+    ): Promise<FuncResult<WeatherForecast, Error>> => {
       const requestCulture = culture ?? defaultLocale.culture
 
       return fetch(
@@ -21,10 +21,12 @@ const createWeatherApi = () => {
           return result.ok(data as WeatherForecast)
         })
         .catch((error) => {
-          return result.error({
-            message: `Failed to fetch weather for location "${location}", culture "${requestCulture}".`,
-            error
-          })
+          return result.error(
+            new Error(
+              `Failed to fetch weather for location "${location}", culture "${requestCulture}".`,
+              { cause: error }
+            )
+          )
         })
     }
   }

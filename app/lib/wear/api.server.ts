@@ -2,6 +2,12 @@ import OpenAI from "openai"
 import { result } from "~/lib/core"
 import type { FuncResult } from "~/lib/core"
 import { defaultLocale } from "~/lib/i18n"
+import {
+  parseWearProfileItem,
+  subjectItems,
+  fitItems,
+  styleItems
+} from "~/lib/wear"
 import type { WearProfile, WearSuggestion } from "~/lib/wear"
 import { temperatureUnit as tempUnit } from "~/lib/weather"
 import type { TemperatureUnit, WeatherForecast } from "~/lib/weather"
@@ -79,9 +85,12 @@ function createWearApi(options: WearApiOptions) {
       forecast: WeatherForecast,
       temperatureUnit?: TemperatureUnit,
       culture?: string
-    ): Promise<FuncResult<WearSuggestion, unknown>> => {
+    ): Promise<FuncResult<WearSuggestion, Error>> => {
       const requestTemperatureUnit = temperatureUnit ?? tempUnit.celcius
       const requestCulture = culture ?? defaultLocale.culture
+
+      const fit = parseWearProfileItem(profile.fit, fitItems)?.name ?? ""
+      const style = parseWearProfileItem(profile.style, styleItems)?.name ?? ""
 
       const forecastContent = getForecastContent(forecast)
 
@@ -102,7 +111,7 @@ function createWearApi(options: WearApiOptions) {
               role: "user",
               content: formatContent([
                 "Based on the weather data below, give me suggestions on how warmly to dress, for example, wear a jumper or t-shirt, trousers, shorts or skirt, a light or warm coat, a scarf and gloves, if I should carry an umbrella, etc.",
-                `I wear clothing typically made to fit ${profile.fit}. I like to dress in a ${profile.style} style. Assume I'll wear the same outfit the whole day.`,
+                `I wear clothing typically made to fit ${fit}. I like to dress in a ${style} style. Assume I'll wear the same outfit the whole day.`,
                 `In your response, use the hourly temperature data from the weather data below to explain your recommendation. Only use ${requestTemperatureUnit}, and respond in my preferred language, which is ${requestCulture}.`
               ])
             },
@@ -133,27 +142,25 @@ function createWearApi(options: WearApiOptions) {
         })
         .catch((error) => {
           console.log(error)
-          return result.error({
-            message: "Failed to fetch wear suggestions.",
-            error
-          })
+          return result.error(
+            new Error("Failed to fetch wear suggestion.", { cause: error })
+          )
         })
     },
     generateImageFromSuggestion: (
       profile: WearProfile,
       suggestion: WearSuggestion
-    ): Promise<FuncResult<string, unknown>> => {
+    ): Promise<FuncResult<string, Error>> => {
+      const subject =
+        parseWearProfileItem(profile.subject, subjectItems)?.name ?? ""
+      const fit = parseWearProfileItem(profile.fit, fitItems)?.name ?? ""
+      const style = parseWearProfileItem(profile.style, styleItems)?.name ?? ""
+
       return openai.images
         .generate({
           model: "dall-e-3",
-          // prompt: formatContent([
-          //   `I NEED to test how the tool works with extremely simple prompts. DO NOT add any detail, just use it AS-IS: Full-body pose of ${profile.subject} dressed in clothes of a ${profile.style} style made to fit ${profile.fit}.`,
-          //   suggestion.description,
-          //   `In the background is a rural scene showing the following weather conditions: ${suggestion.weather}.`,
-          //   "Use a realistic modern anime style."
-          // ]),
           prompt: formatContent([
-            `A colorful illustration in an anime style, in the foreground is a full-body pose of a ${profile.subject} dressed in ${profile.style} clothes that have been made to fit ${profile.fit}, ${suggestion.description}`,
+            `A colorful illustration in an anime style, in the foreground is a full-body pose of a ${subject} dressed in ${style} clothes that have been made to fit ${fit}, ${suggestion.description}`,
             `In the background is a scene of ${suggestion.weather}`
           ]),
           n: 1,
@@ -170,11 +177,13 @@ function createWearApi(options: WearApiOptions) {
           return result.ok(url)
         })
         .catch((error) => {
+          // TODO: https://platform.openai.com/docs/guides/images/error-handling
           console.log(error)
-          return result.error({
-            message: "Failed to generate image from suggestions.",
-            error
-          })
+          return result.error(
+            new Error("Failed to generate image from suggestion.", {
+              cause: error
+            })
+          )
         })
     }
   }

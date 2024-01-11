@@ -1,25 +1,21 @@
-type Nullable<T> = T | null | undefined
-
-interface FuncError<T = unknown> {
-  message: string
-  code?: string
-  error?: T
-}
+type Nullable<T> = T | null
 
 type OkFuncResult<T> = [T, undefined]
-type ErrorFuncResult<T> = [undefined, FuncError<T>]
+type ErrorFuncResult<T extends Error> = [undefined, T]
 
-type FuncResult<TData, TError> = OkFuncResult<TData> | ErrorFuncResult<TError>
+type FuncResult<TData, TError extends Error> =
+  | OkFuncResult<TData>
+  | ErrorFuncResult<TError>
 
 interface FuncResultFactory {
   ok: <T>(data: T) => OkFuncResult<T>
-  error: <T>(err: FuncError<T>) => ErrorFuncResult<T>
+  error: <T extends Error>(err: T) => ErrorFuncResult<T>
 }
 
 function createFuncResultFactory(): FuncResultFactory {
   return {
-    ok: <T>(data: T): OkFuncResult<T> => [data, undefined],
-    error: <T>(err: FuncError<T>): ErrorFuncResult<T> => [undefined, err]
+    ok: (data) => [data, undefined],
+    error: (err) => [undefined, err]
   }
 }
 
@@ -27,4 +23,4 @@ const result = createFuncResultFactory()
 
 export { result }
 
-export type { Nullable, FuncResult, FuncError }
+export type { Nullable, FuncResult }

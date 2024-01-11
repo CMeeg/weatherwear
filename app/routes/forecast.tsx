@@ -2,29 +2,21 @@ import { defer } from "@remix-run/node"
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node"
 import { useLoaderData, Await } from "@remix-run/react"
 import { Suspense } from "react"
+import { forecastRequestValidator } from "~/lib/wear"
 import { createWearApi } from "~/lib/wear/api.server"
 import { createWeatherApi } from "~/lib/weather/api.server"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const submissionData = new URL(request.url).searchParams
+  const { searchParams } = new URL(request.url)
 
-  const submission = {
-    location: submissionData.get("location"),
-    style: submissionData.get("style"),
-    fit: submissionData.get("fit"),
-    subject: submissionData.get("subject")
-  }
+  const validationResult = await forecastRequestValidator.validate(searchParams)
 
-  // TODO: Form validation
-  if (
-    !submission.location ||
-    !submission.style ||
-    !submission.fit ||
-    !submission.subject
-  ) {
+  if (validationResult.error) {
     // TODO: Return validation errors
     throw new Response("Invalid submission.", { status: 500 })
   }
+
+  const forecastRequest = validationResult.data
 
   const weatherApi = createWeatherApi()
 
@@ -32,12 +24,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     openAiApiKey: import.meta.env.OPENAI_API_KEY
   })
 
-  const location = submission.location
-  const profile = {
-    style: submission.style,
-    fit: submission.fit,
-    subject: submission.subject
-  }
+  const { location, ...profile } = forecastRequest
 
   const response = {
     text: "",
@@ -51,6 +38,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         // TODO: Deal with error
         throw new Error(forecastError.message)
       }
+
+      console.log(forecast.nearest_area)
 
       // TODO: Check weather data `nearest_area` array and if more than one item allow the user to choose which one they want to use
 
