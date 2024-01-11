@@ -9,9 +9,13 @@ import dotenv from "dotenv"
 import { getLocalizationScript } from "react-aria-components/i18n"
 import { defaultLocale } from "~/lib/i18n"
 
-// TODO: Is this really needed? If so, need to deal with dev/prod env vars too
-// See: https://github.com/remix-run/remix/discussions/7875
+// TODO: This is a workaround for a [issue in Remix](https://github.com/remix-run/remix/discussions/7875) where environment variables are not available on the server via `import.meta.env` at runtime - this makes them available via `process.env`
 dotenv.config()
+if (process.env.NODE_ENV === "production") {
+  dotenv.config({ path: `.env.production`, override: true })
+} else {
+  dotenv.config({ path: `.env.development`, override: true })
+}
 dotenv.config({ path: `.env.local`, override: true })
 
 const ABORT_DELAY = 30_000

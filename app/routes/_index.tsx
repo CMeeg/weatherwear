@@ -22,16 +22,15 @@ import {
   subjectItems,
   fitItems,
   styleItems,
-  forecastRequestValidator,
-  createForecast
+  wearForecastRequestValidator
 } from "~/lib/wear"
-import { createDbClient } from "~/lib/db"
+import { createWearForecast } from "~/lib/wear/db.server"
 import { FormSelect, FormSelectItem } from "~/components/FormSelect"
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData()
 
-  const validationResult = await forecastRequestValidator.validate(formData)
+  const validationResult = await wearForecastRequestValidator.validate(formData)
 
   if (validationResult.error) {
     return {
@@ -41,9 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const forecastRequest = validationResult.data
 
-  // TODO: Why can't I use env vars outside of routes? This is maybe fixed now - need to try again!
-  const db = createDbClient(process.env.SUPABASE_DB_URL ?? "")
-  const forecast = await createForecast(db, forecastRequest)
+  const forecast = await createWearForecast(forecastRequest)
 
   return redirect(`/forecast/${forecast.url_slug}`)
 }
@@ -56,11 +53,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   [x] If invalid re-render the page and show errors
   [ ] If valid make a request to get the local weather
   [ ] If multiple location matches are found, show a list of options to choose from? Or error?
-  [ ] Generate a URL slug and id and insert a new forecast into the database
-  [ ] Redirect to the forecast page using the generated URL slug
+  [x] Generate a URL slug and id and insert a new forecast into the database, or fetch existing forecast if exists
+  [x] Redirect to the forecast page using the generated URL slug
   */
 
-  // TODO: Validate these inputs using `forecastRequestValidator`
+  // TODO: Validate these inputs using `wearForecastRequestValidator`
   const submissionData = new URL(request.url).searchParams
 
   const submission = {

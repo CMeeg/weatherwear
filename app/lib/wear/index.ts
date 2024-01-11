@@ -1,11 +1,9 @@
 import { z } from "zod"
 import { withZod } from "@remix-validated-form/with-zod"
-import { createForecast } from "~/lib/wear/forecast"
+import { forecast } from "../../../db/schema"
 
-interface WearProfile {
-  subject: string
-  fit: string
-  style: string
+interface WearLocation {
+  text: string
 }
 
 interface WearProfileItem {
@@ -51,9 +49,7 @@ const parseWearProfileItem = (
   return profileItem
 }
 
-// TODO: Use zod to create WearProfile schema and merge it here
-const forecastRequestSchema = z.object({
-  location: z.string().min(1, { message: "Where are you?" }),
+const wearProfileSchema = z.object({
   subject: z
     .string()
     .min(1, { message: "What are you?" })
@@ -74,9 +70,17 @@ const forecastRequestSchema = z.object({
     })
 })
 
-type ForecastRequest = z.infer<typeof forecastRequestSchema>
+type WearProfile = z.infer<typeof wearProfileSchema>
 
-const forecastRequestValidator = withZod(forecastRequestSchema)
+const wearForecastRequestSchema = z
+  .object({
+    location: z.string().min(1, { message: "Where are you?" })
+  })
+  .merge(wearProfileSchema)
+
+type WearForecastRequest = z.infer<typeof wearForecastRequestSchema>
+
+const wearForecastRequestValidator = withZod(wearForecastRequestSchema)
 
 interface WearSuggestion {
   advice: string
@@ -84,14 +88,22 @@ interface WearSuggestion {
   weather: string
 }
 
+type WearForecast = typeof forecast.$inferSelect
+
 export {
   subjectItems,
   fitItems,
   styleItems,
   parseWearProfileItem,
-  forecastRequestSchema,
-  forecastRequestValidator,
-  createForecast
+  wearForecastRequestSchema,
+  wearForecastRequestValidator
 }
 
-export type { WearProfile, WearProfileItem, ForecastRequest, WearSuggestion }
+export type {
+  WearLocation,
+  WearProfile,
+  WearProfileItem,
+  WearForecastRequest,
+  WearSuggestion,
+  WearForecast
+}

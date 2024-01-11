@@ -1,4 +1,4 @@
-import type { WeatherForecast } from "~/lib/weather/weather.generated"
+import type { WeatherForecast } from "~/lib/weather/wttr.generated"
 
 const temperatureUnit = {
   celcius: "celcius",

@@ -1,7 +1,7 @@
 import { result } from "~/lib/core"
 import type { FuncResult } from "~/lib/core"
 import { defaultLocale } from "~/lib/i18n"
-import type { WeatherForecast } from "~/lib/weather/weather.generated"
+import type { WeatherForecast } from "~/lib/weather/wttr.generated"
 
 const createWeatherApi = () => {
   return {
