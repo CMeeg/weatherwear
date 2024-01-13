@@ -1,3 +1,4 @@
+// TODO: Remove this if not used
 class ValidationError extends Error {
   fieldErrors: Record<string, string>
 

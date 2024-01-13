@@ -2,6 +2,8 @@ import { createRequestHandler } from "@remix-run/express"
 import { installGlobals } from "@remix-run/node"
 import express from "express"
 
+// TODO: Take a look at: https://github.com/epicweb-dev/epic-stack/blob/main/server/index.ts
+
 installGlobals()
 
 const viteDevServer =

@@ -29,7 +29,12 @@ const fitItems: Array<WearProfileItem> = [
 const styleItems: Array<WearProfileItem> = [
   { codename: "casual", name: "Casual" },
   { codename: "formal", name: "Formal" },
-  { codename: "punk", name: "Punk" }
+  { codename: "bohemian", name: "Bohemian" },
+  { codename: "vintage", name: "Vintage" },
+  { codename: "preppy", name: "Preppy" },
+  { codename: "punk", name: "Punk" },
+  { codename: "goth", name: "Goth" },
+  { codename: "grunge", name: "Grunge" }
 ]
 
 const parseWearProfileItem = (

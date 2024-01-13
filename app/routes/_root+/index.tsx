@@ -10,14 +10,7 @@ import type {
   LoaderFunctionArgs,
   MetaFunction
 } from "@remix-run/node"
-import {
-  Form,
-  Button,
-  FieldError,
-  Input,
-  Label,
-  TextField
-} from "react-aria-components"
+import { Form, Button } from "react-aria-components"
 import {
   subjectItems,
   fitItems,
@@ -26,6 +19,7 @@ import {
 } from "~/lib/wear"
 import { createWearForecast } from "~/lib/wear/db.server"
 import { FormSelect, FormSelectItem } from "~/components/FormSelect"
+import { FormGeolocationInput } from "~/components/FormGeolocationInput"
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData()
@@ -93,7 +87,7 @@ export default function Index() {
     useLoaderData<typeof loader>()
 
   const navigation = useNavigation()
-  const isSubmitting = navigation.formAction === "/forecast"
+  const isSubmitting = navigation.state !== "idle"
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
@@ -111,16 +105,12 @@ export default function Index() {
         onSubmit={onSubmit}
       >
         <fieldset disabled={isSubmitting}>
-          <TextField
+          <FormGeolocationInput
             name="location"
-            type="text"
+            label="I'm in "
             isRequired
-            defaultValue={submission?.location ?? ""}
-          >
-            <Label>I&rsquo;m in </Label>
-            <Input />
-            <FieldError />
-          </TextField>
+            defaultInputValue={submission?.location ?? ""}
+          />
           <span>. </span>
           <FormSelect
             name="subject"
