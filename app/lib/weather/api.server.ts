@@ -5,29 +5,51 @@ import type { WeatherForecast } from "~/lib/weather/wttr.generated"
 
 const createWeatherApi = () => {
   return {
-    fetchForecast: (
+    fetchForecast: async (
       location: string,
       culture?: string
     ): Promise<FuncResult<WeatherForecast, Error>> => {
       const requestCulture = culture ?? defaultLocale.culture
 
-      return fetch(
-        `https://wttr.in/${location}?lang=${requestCulture}&format=j1`
-      )
-        .then((response) => {
-          return response.json()
-        })
-        .then((data) => {
-          return result.ok(data as WeatherForecast)
-        })
-        .catch((error) => {
-          return result.error(
-            new Error(
-              `Failed to fetch weather for location "${location}", culture "${requestCulture}".`,
-              { cause: error }
-            )
+      const locationLower = location.toLowerCase()
+
+      const weatherUrl = new URL("https://wttr.in")
+      weatherUrl.pathname = locationLower
+      weatherUrl.search = new URLSearchParams({
+        lang: requestCulture,
+        format: "j1"
+      }).toString()
+
+      try {
+        const weatherResponse = await fetch(weatherUrl.toString())
+
+        if (!weatherResponse.ok) {
+          throw new Error(
+            `Request returned status ${weatherResponse.status}: ${weatherResponse.statusText}`
           )
-        })
+        }
+
+        const weather = (await weatherResponse.json()) as WeatherForecast
+        const areaName = weather.nearest_area?.[0]?.areaName?.[0]?.value ?? ""
+
+        if (
+          !areaName.length ||
+          !locationLower.includes(areaName.toLowerCase())
+        ) {
+          throw new Error(
+            `Nearest area "${areaName}" does not appear to match location "${location}".`
+          )
+        }
+
+        return result.ok(weather)
+      } catch (error) {
+        return result.error(
+          new Error(
+            `Failed to fetch weather for location "${location}", culture "${requestCulture}".`,
+            { cause: error }
+          )
+        )
+      }
     }
   }
 }

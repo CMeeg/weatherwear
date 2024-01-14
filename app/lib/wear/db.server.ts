@@ -10,6 +10,7 @@ import {
   styleItems
 } from "~/lib/wear"
 import type { WearForecastRequest, WearForecast } from "~/lib/wear"
+import type { WeatherForecast } from "~/lib/weather"
 import { db, dbSchema } from "~/lib/db/client.server"
 
 const forecastTable = dbSchema.public.forecast
@@ -31,7 +32,8 @@ const fetchWearForecastFromSlug = async (
 }
 
 const createWearForecast = async (
-  forecastRequest: WearForecastRequest
+  forecastRequest: WearForecastRequest,
+  weatherForecast: WeatherForecast
 ): Promise<WearForecast> => {
   const { location, ...profile } = forecastRequest
 
@@ -66,7 +68,7 @@ const createWearForecast = async (
       date,
       url_slug: urlSlug,
       profile: profile,
-      weather: { todo: "weather" }
+      weather: weatherForecast
     })
     .returning()
 

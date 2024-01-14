@@ -17,7 +17,11 @@ const subjectItems: Array<WearProfileItem> = [
   { codename: "cat", name: "Cat" },
   { codename: "dog", name: "Dog" },
   { codename: "badger", name: "Badger" },
-  { codename: "horse", name: "Horse" }
+  { codename: "bear", name: "Bear" },
+  { codename: "lion", name: "Lion" },
+  { codename: "rabbit", name: "Rabbit" },
+  { codename: "wolf", name: "Wolf" },
+  { codename: "panda", name: "Panda" }
 ]
 
 const fitItems: Array<WearProfileItem> = [

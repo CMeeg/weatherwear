@@ -8,6 +8,7 @@ import {
   styleItems,
   wearForecastRequestValidator
 } from "~/lib/wear"
+import { createWeatherApi } from "~/lib/weather/api.server"
 import { createWearForecast } from "~/lib/wear/db.server"
 import { FormSelect, FormSelectItem } from "~/components/FormSelect"
 import { FormLocationInput } from "~/components/FormLocationInput"
@@ -24,6 +25,8 @@ export async function action({ request }: ActionFunctionArgs) {
   [x] Redirect to the forecast page using the generated URL slug
   */
 
+  // Validate form data
+
   const formData = await request.formData()
 
   const validationResult = await wearForecastRequestValidator.validate(formData)
@@ -36,7 +39,26 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const forecastRequest = validationResult.data
 
-  const forecast = await createWearForecast(forecastRequest)
+  // Fetch and validate weather forecast for provided location
+
+  const weatherApi = createWeatherApi()
+
+  const [weatherForecast, weatherForecastError] =
+    await weatherApi.fetchForecast(forecastRequest.location)
+
+  if (weatherForecastError) {
+    // TODO: Be a bit smarter about error messages depending on type of error returned
+    return {
+      errors: {
+        location:
+          "Sorry we couldn't fetch the weather for that location. Try searching for your nearest large town or city instead."
+      }
+    }
+  }
+
+  // Create the forecast and redirect over to the forecast page
+
+  const forecast = await createWearForecast(forecastRequest, weatherForecast)
 
   return redirect(`/forecast/${forecast.url_slug}`)
 }

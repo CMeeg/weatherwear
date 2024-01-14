@@ -8,7 +8,6 @@ import {
 } from "~/lib/wear/db.server"
 import type { WearForecast } from "~/lib/wear"
 import { createWearApi } from "~/lib/wear/api.server"
-import { createWeatherApi } from "~/lib/weather/api.server"
 import type { WeatherForecast } from "~/lib/weather"
 
 const completeWearForecast = async (wearForecast: WearForecast) => {
@@ -16,25 +15,6 @@ const completeWearForecast = async (wearForecast: WearForecast) => {
     const response = {
       text: "",
       image_url: ""
-    }
-
-    // TODO: Need to get this typed properly
-    if (Object.keys(wearForecast.weather as WeatherForecast).length < 2) {
-      // Fetch the weather forecast and update the wear forecast
-      // TODO: Possibly going to move this earlier - if so, need to remove this block of code
-
-      const weatherApi = createWeatherApi()
-
-      const [weatherForecast, weatherForecastError] =
-        await weatherApi.fetchForecast(wearForecast.location.text)
-
-      if (weatherForecastError) {
-        // TODO: Deal with error
-        throw new Error(weatherForecastError.message)
-      }
-
-      wearForecast.weather = weatherForecast
-      wearForecast = await updateWearForecast(wearForecast)
     }
 
     if (!wearForecast.suggestion || !wearForecast.image_id) {
@@ -101,6 +81,8 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     // TODO: Need to read up on 404s, error boundaries etc
     throw new Response("Forecast not found.", { status: 404 })
   }
+
+  // TODO: If the forecast is already complete then there is no need to defer
 
   const weatherWear = completeWearForecast(wearForecast)
 

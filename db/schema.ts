@@ -8,6 +8,7 @@ import {
   uuid
 } from "drizzle-orm/pg-core"
 import type { WearLocation, WearProfile, WearSuggestion } from "~/lib/wear"
+import type { WeatherForecast } from "~/lib/weather"
 
 export const forecast = pgTable("forecast", {
   id: uuid("id").primaryKey(),
@@ -20,7 +21,7 @@ export const forecast = pgTable("forecast", {
   date: date("date", { mode: "string" }).notNull(),
   url_slug: text("url_slug").unique().notNull(),
   profile: jsonb("profile").notNull().$type<WearProfile>(),
-  weather: json("weather").notNull(),
+  weather: json("weather").notNull().$type<WeatherForecast>(),
   suggestion: jsonb("suggestion").$type<WearSuggestion>(),
   image_id: uuid("image_id")
 })

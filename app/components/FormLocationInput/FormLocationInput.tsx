@@ -45,7 +45,7 @@ function FormLocationInput<T extends object>({
             {
               action: "/api/location/suggest",
               method: "GET",
-              debounceTimeout: 500
+              debounceTimeout: 600
             }
           )
         }
