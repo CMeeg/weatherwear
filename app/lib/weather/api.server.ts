@@ -14,7 +14,7 @@ const createWeatherApi = () => {
       const locationLower = location.toLowerCase()
 
       const weatherUrl = new URL("https://wttr.in")
-      weatherUrl.pathname = locationLower
+      weatherUrl.pathname = locationLower.replaceAll(", ", ",")
       weatherUrl.search = new URLSearchParams({
         lang: requestCulture,
         format: "j1"

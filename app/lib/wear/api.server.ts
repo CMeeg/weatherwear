@@ -164,17 +164,18 @@ function createWearApi(options: WearApiOptions) {
             `In the background is a scene of ${suggestion.weather}`
           ]),
           n: 1,
-          size: "1024x1024"
+          size: "1024x1024",
+          response_format: "b64_json"
         })
         .then((image) => {
-          const url = image.data[0]?.url ?? ""
+          const data = image.data[0]?.b64_json ?? ""
 
-          if (!url) {
+          if (!data) {
             // TODO: Custom error type
-            throw new Error("Image returned with no URL.")
+            throw new Error("Image returned with no data.")
           }
 
-          return result.ok(url)
+          return result.ok(data)
         })
         .catch((error) => {
           // TODO: https://platform.openai.com/docs/guides/images/error-handling

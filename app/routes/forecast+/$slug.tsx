@@ -6,6 +6,10 @@ import {
   fetchWearForecastFromSlug,
   updateWearForecast
 } from "~/lib/wear/db.server"
+import {
+  uploadWearForecastImage,
+  getForecastImageUrl
+} from "~/lib/wear/storage.server"
 import type { WearForecast } from "~/lib/wear"
 import { createWearApi } from "~/lib/wear/api.server"
 import type { WeatherForecast } from "~/lib/weather"
@@ -41,23 +45,35 @@ const completeWearForecast = async (wearForecast: WearForecast) => {
       }
 
       if (wearForecast.suggestion && !wearForecast.image_id) {
-        const [imageUrl, imageError] =
+        const [imageData, imageDataError] =
           await wearApi.generateImageFromSuggestion(
             wearForecast.profile,
             wearForecast.suggestion
           )
 
-        if (imageError) {
+        if (imageDataError) {
           // TODO: Deal with error
-          throw new Error(imageError.message)
+          throw new Error(imageDataError.message)
         }
 
-        // TODO: When the image is going into Supabase we need to remove this and update the image_id instead, then return a URL to the image on Supabase
-        response.image_url = imageUrl
+        // TODO: Do we want the image id here, or the path/full_path?
+        const [imageFile, imageFileError] = await uploadWearForecastImage(
+          wearForecast.id,
+          imageData
+        )
+
+        if (imageFileError) {
+          // TODO: Deal with error
+          throw new Error(imageFileError.message)
+        }
+
+        wearForecast.image_id = imageFile.id
+        wearForecast = await updateWearForecast(wearForecast)
       }
     }
 
     response.text = wearForecast.suggestion?.advice ?? ""
+    response.image_url = getForecastImageUrl(wearForecast)
 
     return response
   } catch (error) {
