@@ -1,50 +1,73 @@
 import type { LoaderFunctionArgs } from "@remix-run/node"
 import { json } from "@remix-run/node"
+import { defaultLocale } from "~/lib/i18n"
+import type { LocationItem } from "~/lib/places"
 
-/**
- * This route is called via `useFetcher` from the Combobox input. It returns a
- * set of languages as the user types. It's called a Resource Route because it
- * doesn't export a component.  You might think of it as an "API Route".
- */
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  // First get what the user is searching for by creating a URL:
-  // https://developer.mozilla.org/en-US/docs/Web/API/URL
-  // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+  // Get the query from the URL
   const url = new URL(request.url)
   const query = url.searchParams.get("q")
 
-  const errorMessage = "No locations found. Please try again."
-
-  if (!query)
+  if (!query) {
     return json({
-      items: [],
-      error: errorMessage
+      items: undefined,
+      error: "Please enter a location to search for."
     })
+  }
 
-  // TODO: Use https://developers.google.com/maps/documentation/places/web-service/overview
+  // TODO: Need to add [Google logo](https://developers.google.com/maps/documentation/places/web-service/policies#logo) when showing response
 
-  const locations = [
-    { name: "Witney, UK" },
-    { name: "London, UK" },
-    { name: "Los Angeles, US" }
-  ]
+  // Fetch places from the Google Places Autocomplete API
+  // https://developers.google.com/maps/documentation/places/web-service/autocomplete
 
-  const matches = locations.filter((location) => {
-    return location.name.toLowerCase().includes(query.toLowerCase())
-  })
+  const placesUrl = new URL(
+    "https://maps.googleapis.com/maps/api/place/autocomplete/json"
+  )
+
+  placesUrl.search = new URLSearchParams({
+    input: query,
+    language: defaultLocale.culture,
+    types: "(cities)",
+    key: process.env.GOOGLE_MAPS_API_KEY ?? ""
+  }).toString()
+
+  const locations: LocationItem[] = []
+
+  try {
+    const placesResponse = await fetch(placesUrl.toString())
+
+    if (!placesResponse.ok) {
+      throw new Error("Failed to fetch places.")
+    }
+
+    const places =
+      (await placesResponse.json()) as google.maps.places.AutocompleteResponse
+
+    places.predictions.map((prediction) => {
+      locations.push({
+        id: prediction.place_id,
+        name: prediction.description
+      })
+    })
+  } catch (error) {
+    return json({
+      items: undefined,
+      error: "There was a problem fetching locations. Please try again."
+    })
+  }
+
+  // Return the locations data
 
   const result = {
-    items: matches,
-    error: matches.length === 0 ? errorMessage : undefined
+    items: locations,
+    error:
+      locations.length === 0
+        ? "No locations found. Please try a different search."
+        : undefined
   }
 
   return json(result, {
-    // Add a little bit of caching so when the user backspaces a value in the
-    // Combobox, the browser has a local copy of the data and doesn't make a
-    // request to the server for it. No need to send a client side data fetching
-    // library that caches results in memory, the browser has this ability
-    // built-in.
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+    // Add a little bit of caching so when the user backspaces a value in the input the browser has a local copy of the data and doesn't make a request to the server for it
     headers: { "Cache-Control": "max-age=60" }
   })
 }

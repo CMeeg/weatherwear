@@ -1,15 +1,6 @@
-import { json, redirect } from "@remix-run/node"
-import {
-  useActionData,
-  useLoaderData,
-  useNavigation,
-  useSubmit
-} from "@remix-run/react"
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  MetaFunction
-} from "@remix-run/node"
+import { redirect } from "@remix-run/node"
+import { useActionData, useNavigation, useSubmit } from "@remix-run/react"
+import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node"
 import { Form, Button } from "react-aria-components"
 import {
   subjectItems,
@@ -19,9 +10,20 @@ import {
 } from "~/lib/wear"
 import { createWearForecast } from "~/lib/wear/db.server"
 import { FormSelect, FormSelectItem } from "~/components/FormSelect"
-import { FormGeolocationInput } from "~/components/FormGeolocationInput"
+import { FormLocationInput } from "~/components/FormLocationInput"
 
 export async function action({ request }: ActionFunctionArgs) {
+  /* TODO:
+  [x] Use a PRG pattern to redirect to the forecast page after a successful submission
+  [x] Validate inputs against known good values
+  [ ] Can use server validator on client?
+  [x] If invalid re-render the page and show errors
+  [ ] If valid make a request to get the local weather
+  [x] If multiple location matches are found, show a list of options to choose from? Or error?
+  [x] Generate a URL slug and id and insert a new forecast into the database, or fetch existing forecast if exists
+  [x] Redirect to the forecast page using the generated URL slug
+  */
+
   const formData = await request.formData()
 
   const validationResult = await wearForecastRequestValidator.validate(formData)
@@ -39,31 +41,6 @@ export async function action({ request }: ActionFunctionArgs) {
   return redirect(`/forecast/${forecast.url_slug}`)
 }
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  /* TODO:
-  [x] Move this to an action and use a PRG pattern to redirect to the forecast page after a successful submission
-  [x] Validate inputs against known good values
-  [ ] Can use server validator on client?
-  [x] If invalid re-render the page and show errors
-  [ ] If valid make a request to get the local weather
-  [ ] If multiple location matches are found, show a list of options to choose from? Or error?
-  [x] Generate a URL slug and id and insert a new forecast into the database, or fetch existing forecast if exists
-  [x] Redirect to the forecast page using the generated URL slug
-  */
-
-  // TODO: Validate these inputs using `wearForecastRequestValidator`
-  const submissionData = new URL(request.url).searchParams
-
-  const submission = {
-    location: submissionData.get("location"),
-    style: submissionData.get("style"),
-    fit: submissionData.get("fit"),
-    subject: submissionData.get("subject")
-  }
-
-  return json({ submission, subjectItems, fitItems, styleItems })
-}
-
 export const meta: MetaFunction = () => {
   return [
     { title: "WeatherWear" },
@@ -75,16 +52,13 @@ export const meta: MetaFunction = () => {
 }
 
 export default function Index() {
+  const actionData = useActionData<typeof action>()
+
   const submit = useSubmit()
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     submit(e.currentTarget)
   }
-
-  const actionData = useActionData<typeof action>()
-
-  const { submission, subjectItems, fitItems, styleItems } =
-    useLoaderData<typeof loader>()
 
   const navigation = useNavigation()
   const isSubmitting = navigation.state !== "idle"
@@ -105,19 +79,13 @@ export default function Index() {
         onSubmit={onSubmit}
       >
         <fieldset disabled={isSubmitting}>
-          <FormGeolocationInput
-            name="location"
-            label="I'm in "
-            isRequired
-            defaultInputValue={submission?.location ?? ""}
-          />
+          <FormLocationInput name="location" label="I'm in " isRequired />
           <span>. </span>
           <FormSelect
             name="subject"
             label="I'm a "
             isRequired
             items={subjectItems}
-            defaultSelectedKey={submission?.subject ?? ""}
           >
             {(item) => (
               <FormSelectItem id={item.codename}>{item.name}</FormSelectItem>
@@ -129,7 +97,6 @@ export default function Index() {
             label="made to fit "
             isRequired
             items={fitItems}
-            defaultSelectedKey={submission?.fit ?? ""}
           >
             {(item) => (
               <FormSelectItem id={item.codename}>{item.name}</FormSelectItem>
@@ -141,7 +108,6 @@ export default function Index() {
             label="my style is "
             isRequired
             items={styleItems}
-            defaultSelectedKey={submission?.style ?? ""}
           >
             {(item) => (
               <FormSelectItem id={item.codename}>{item.name}</FormSelectItem>

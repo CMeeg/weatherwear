@@ -1,28 +1,33 @@
-# templates/unstable-vite
+# WeatherWear
 
-⚠️ Remix support for Vite is unstable and not recommended for production.
+## Development
 
-📖 See the [Remix Vite docs][remix-vite-docs] for details on supported features.
+There are some pre-requisites for development. You will need:
 
-## Setup
+* An OpenAI API Key with access to GPT4 and Dall-E 3
+* A Google Maps Places API key
+* Node.js >= v18
+* Docker Desktop
 
-```shellscript
-npx create-remix@latest --template remix-run/remix/templates/unstable-vite
-```
+Then:
 
-## Run
+```bash
+# Install dependencies
+npm install
 
-Spin up the Vite dev server:
+# Start Supabase services
+npm run supabase start
 
-```shellscript
+# Initialise your `.env.local` file
+npm run env:init
+
+# Edit your `.env.local` file and populate vars as appropriate
+# VS Code used as an example - use whatever editor you want
+code .env.local
+
+# Run database migrations
+npm run db:migrate
+
+# Start the dev server
 npm run dev
 ```
-
-Or build your app for production and run it:
-
-```shellscript
-npm run build
-npm run start
-```
-
-[remix-vite-docs]: https://remix.run/docs/en/main/future/vite
