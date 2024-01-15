@@ -15,8 +15,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     })
   }
 
-  // TODO: Need to add [Google logo](https://developers.google.com/maps/documentation/places/web-service/policies#logo) when showing response
-
   // Fetch places from the Google Places Autocomplete API
   // https://developers.google.com/maps/documentation/places/web-service/autocomplete
 

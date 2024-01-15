@@ -40,12 +40,7 @@ const uploadWearForecastImage = async (
 const getForecastImageUrl = (forecast: WearForecast) => {
   const { data } = createSupabaseClient()
     .storage.from("forecast")
-    .getPublicUrl(forecast.id, {
-      transform: {
-        width: 1024,
-        quality: 80
-      }
-    })
+    .getPublicUrl(forecast.id)
 
   return data.publicUrl
 }

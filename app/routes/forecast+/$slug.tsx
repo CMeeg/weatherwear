@@ -12,27 +12,20 @@ import {
 } from "~/lib/wear/storage.server"
 import type { WearForecast } from "~/lib/wear"
 import { createWearApi } from "~/lib/wear/api.server"
-import type { WeatherForecast } from "~/lib/weather"
 
 const completeWearForecast = async (wearForecast: WearForecast) => {
   try {
-    const response = {
-      text: "",
-      image_url: ""
-    }
-
     if (!wearForecast.suggestion || !wearForecast.image_id) {
       const wearApi = createWearApi({
         openAiApiKey: process.env.OPENAI_API_KEY ?? ""
       })
 
       if (!wearForecast.suggestion) {
-        // Fetch the wear suggestion and update the wear forecast
+        // Ask for clothing suggestion based on the profile and weather
 
         const [suggestion, suggestionError] = await wearApi.fetchSuggestion(
           wearForecast.profile,
-          // TODO: Need to get this typed properly
-          wearForecast.weather as WeatherForecast
+          wearForecast.weather
         )
 
         if (suggestionError) {
@@ -40,11 +33,15 @@ const completeWearForecast = async (wearForecast: WearForecast) => {
           throw new Error(suggestionError.message)
         }
 
+        // Update the forecast with the suggestion
+
         wearForecast.suggestion = suggestion
         wearForecast = await updateWearForecast(wearForecast)
       }
 
       if (wearForecast.suggestion && !wearForecast.image_id) {
+        // Generate the image based on the profile and suggestion
+
         const [imageData, imageDataError] =
           await wearApi.generateImageFromSuggestion(
             wearForecast.profile,
@@ -56,7 +53,8 @@ const completeWearForecast = async (wearForecast: WearForecast) => {
           throw new Error(imageDataError.message)
         }
 
-        // TODO: Do we want the image id here, or the path/full_path?
+        // Upload the image to storage
+
         const [imageFile, imageFileError] = await uploadWearForecastImage(
           wearForecast.id,
           imageData
@@ -67,13 +65,17 @@ const completeWearForecast = async (wearForecast: WearForecast) => {
           throw new Error(imageFileError.message)
         }
 
+        // Update the forecast with a reference to the image
+
         wearForecast.image_id = imageFile.id
         wearForecast = await updateWearForecast(wearForecast)
       }
     }
 
-    response.text = wearForecast.suggestion?.advice ?? ""
-    response.image_url = getForecastImageUrl(wearForecast)
+    const response = {
+      text: wearForecast.suggestion?.advice ?? "",
+      image_url: getForecastImageUrl(wearForecast)
+    }
 
     return response
   } catch (error) {
@@ -139,9 +141,10 @@ export default function Index() {
         >
           {(weatherWear) => (
             <p>
+              {/* TODO: Is there an image component I can use here */}
               {weatherWear.image_url && (
                 <img
-                  src={weatherWear.image_url}
+                  src={`${weatherWear.image_url}?width=1024&quality=80`}
                   alt=""
                   style={{ height: "80vh" }}
                 />

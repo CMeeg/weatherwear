@@ -60,6 +60,7 @@ function FormLocationInput<T extends object>({
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage ?? locationsFetcher.data?.error}</FieldError>
       <Popover>
+        {/* TODO: Need to add [Google logo](https://developers.google.com/maps/documentation/places/web-service/policies#logo) when showing response */}
         <ListBox items={locationsFetcher.data?.items}>
           {(item) => (
             <ListBoxItem

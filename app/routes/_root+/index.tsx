@@ -14,21 +14,11 @@ import { FormSelect, FormSelectItem } from "~/components/FormSelect"
 import { FormLocationInput } from "~/components/FormLocationInput"
 
 export async function action({ request }: ActionFunctionArgs) {
-  /* TODO:
-  [x] Use a PRG pattern to redirect to the forecast page after a successful submission
-  [x] Validate inputs against known good values
-  [ ] Can use server validator on client?
-  [x] If invalid re-render the page and show errors
-  [ ] If valid make a request to get the local weather
-  [x] If multiple location matches are found, show a list of options to choose from? Or error?
-  [x] Generate a URL slug and id and insert a new forecast into the database, or fetch existing forecast if exists
-  [x] Redirect to the forecast page using the generated URL slug
-  */
-
   // Validate form data
 
   const formData = await request.formData()
 
+  // TODO: Can use same validator on client too?
   const validationResult = await wearForecastRequestValidator.validate(formData)
 
   if (validationResult.error) {
