@@ -29,7 +29,17 @@ type WearProfileAttribute = z.infer<typeof wearProfileAttribute>
 const wearSuggestionSchema = z.object({
   advice: z.string(),
   description: z.string(),
-  weather: z.string()
+  weather: z.string(),
+  meta: z.object({
+    id: z.string(),
+    model: z.string(),
+    usage: z.object({
+      prompt_tokens: z.number(),
+      completion_tokens: z.number(),
+      total_tokens: z.number()
+    }),
+    system_fingerprint: z.string()
+  })
 })
 
 type WearSuggestion = z.infer<typeof wearSuggestionSchema>

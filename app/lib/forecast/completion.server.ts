@@ -1,12 +1,35 @@
 import OpenAI from "openai"
 import { result } from "~/lib/core"
-import type { FuncResult } from "~/lib/core"
+import type { ValueOf, FuncResult } from "~/lib/core"
+import { createEventEmitter } from "~/lib/core/events.server"
 import { defaultLocale } from "~/lib/i18n"
 import { wearSuggestionSchema } from "~/lib/forecast"
 import type { WearSuggestion, WearForecast } from "~/lib/forecast"
 import { temperatureUnit as tempUnit } from "~/lib/weather"
 import type { TemperatureUnit, WeatherForecast } from "~/lib/weather"
 import type { ForecastApi } from "~/lib/forecast/api.server"
+
+const forecastCompletionEventName = "completion" as const
+
+const forecastCompletionEventStatus = {
+  completed: "completed",
+  fetchingSuggestion: "fetching_suggestion",
+  generatingImage: "generating_image",
+  failed: "failed"
+} as const
+
+type ForecastCompletionEventStatus = ValueOf<
+  typeof forecastCompletionEventStatus
+>
+
+interface ForecastCompletionEvent {
+  id: string
+  url_slug: string
+  status: ForecastCompletionEventStatus
+}
+
+const forecastCompletionEventEmitter =
+  createEventEmitter<ForecastCompletionEvent>(forecastCompletionEventName)
 
 const formatContent = (content: string[]) => {
   return content.join(" ")
@@ -127,9 +150,15 @@ const fetchSuggestion = async (
 
     // Validate if the content is valid JSON and matches the expected schema
 
-    const suggestion = await wearSuggestionSchema.parseAsync(
-      JSON.parse(content)
-    )
+    const suggestion = await wearSuggestionSchema.parseAsync({
+      ...JSON.parse(content),
+      meta: {
+        id: completion.id,
+        model: completion.model,
+        usage: completion.usage,
+        system_fingerprint: completion.system_fingerprint
+      }
+    })
 
     return result.ok(suggestion)
   } catch (error) {
@@ -200,6 +229,12 @@ const createWearForecastCompletionApi = (forecastApi: ForecastApi) => {
       forecast: WearForecast
     ): Promise<FuncResult<WearForecast>> => {
       if (isComplete(forecast)) {
+        forecastCompletionEventEmitter.emit({
+          id: forecast.id,
+          url_slug: forecast.url_slug,
+          status: forecastCompletionEventStatus.completed
+        })
+
         return result.ok(forecast)
       }
 
@@ -210,6 +245,12 @@ const createWearForecastCompletionApi = (forecastApi: ForecastApi) => {
 
         if (!forecast.suggestion) {
           // Ask for clothing suggestion based on the profile and weather
+
+          forecastCompletionEventEmitter.emit({
+            id: forecast.id,
+            url_slug: forecast.url_slug,
+            status: forecastCompletionEventStatus.fetchingSuggestion
+          })
 
           const [suggestion, suggestionError] = await fetchSuggestion(
             openAI,
@@ -239,6 +280,12 @@ const createWearForecastCompletionApi = (forecastApi: ForecastApi) => {
         if (forecast.suggestion && !forecast.image_id) {
           // Generate the image based on the profile and suggestion
 
+          forecastCompletionEventEmitter.emit({
+            id: forecast.id,
+            url_slug: forecast.url_slug,
+            status: forecastCompletionEventStatus.generatingImage
+          })
+
           const [imageData, imageDataError] = await generateImageFromSuggestion(
             openAI,
             forecast
@@ -262,8 +309,20 @@ const createWearForecastCompletionApi = (forecastApi: ForecastApi) => {
           }
         }
 
+        forecastCompletionEventEmitter.emit({
+          id: forecast.id,
+          url_slug: forecast.url_slug,
+          status: forecastCompletionEventStatus.completed
+        })
+
         return result.ok(forecast)
       } catch (error) {
+        forecastCompletionEventEmitter.emit({
+          id: forecast.id,
+          url_slug: forecast.url_slug,
+          status: forecastCompletionEventStatus.failed
+        })
+
         // TODO: Error handling
         const err = error as Error
 
@@ -273,4 +332,11 @@ const createWearForecastCompletionApi = (forecastApi: ForecastApi) => {
   }
 }
 
-export { createWearForecastCompletionApi }
+export {
+  createWearForecastCompletionApi,
+  forecastCompletionEventName,
+  forecastCompletionEventStatus,
+  forecastCompletionEventEmitter
+}
+
+export type { ForecastCompletionEvent, ForecastCompletionEventStatus }

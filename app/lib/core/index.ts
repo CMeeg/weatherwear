@@ -1,5 +1,7 @@
 type Nullable<T> = T | null
 
+type ValueOf<T> = T[keyof T]
+
 type OkFuncResult<T> = [T, undefined]
 type ErrorFuncResult<T extends Error> = [undefined, T]
 
@@ -24,4 +26,4 @@ const result = createFuncResultFactory()
 
 export { result }
 
-export type { Nullable, FuncResult }
+export type { Nullable, ValueOf, FuncResult }

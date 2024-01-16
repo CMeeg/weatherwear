@@ -40,6 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
     await weatherApi.fetchForecast(forecastRequest.location)
 
   if (weatherForecastError) {
+    // TODO: There seems to be a bug where if this error is triggered you can't resubmit the form - like the error persists
     // TODO: Be a bit smarter about error messages depending on type of error returned
     return {
       errors: {

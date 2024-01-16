@@ -2,8 +2,10 @@ import { defer } from "@remix-run/node"
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node"
 import { useLoaderData, Await } from "@remix-run/react"
 import { Suspense } from "react"
+import { useEventSource } from "remix-utils/sse/react"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWearForecastCompletionApi } from "~/lib/forecast/completion.server"
+import type { ForecastCompletionEventStatus } from "~/lib/forecast/completion.server"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   // Validate params
@@ -55,7 +57,16 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       }
     })
 
+  const statusMessages: Record<ForecastCompletionEventStatus, string> = {
+    fetching_suggestion: "Considering your options...",
+    generating_image: "Creating your look...",
+    completed: "All done!",
+    failed: "Something went wrong. How embarrassing."
+  }
+
   return defer({
+    slug: forecast.url_slug,
+    statusMessages,
     weatherWear
   })
 }
@@ -72,23 +83,27 @@ export const meta: MetaFunction = () => {
 }
 
 export default function Index() {
-  const { weatherWear } = useLoaderData<typeof loader>()
+  const { slug, statusMessages, weatherWear } = useLoaderData<typeof loader>()
+
+  const status = useEventSource(`/forecast/completion/${slug}`, {
+    event: "status"
+  })
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Your forecast for today</h1>
 
-      {/* TODO: Stream results:
-      https://www.jacobparis.com/content/remix-defer-streaming-progress
-      https://remix.run/docs/en/main/guides/streaming
-      Need to take a look at Supabase real-time also */}
-
-      <Suspense fallback={<p>Getting forecast...</p>}>
+      <Suspense
+        fallback={
+          <p>
+            {statusMessages[status as ForecastCompletionEventStatus] ??
+              statusMessages["fetching_suggestion"]}
+          </p>
+        }
+      >
         <Await
           resolve={weatherWear}
-          errorElement={
-            <p>Sorry, there was an error fetching your forecast.</p>
-          }
+          errorElement={<p>{statusMessages["failed"]}</p>}
         >
           {(weatherWear) => (
             <p>
