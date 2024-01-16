@@ -3,9 +3,10 @@ type Nullable<T> = T | null
 type OkFuncResult<T> = [T, undefined]
 type ErrorFuncResult<T extends Error> = [undefined, T]
 
-type FuncResult<TData, TError extends Error> =
-  | OkFuncResult<TData>
-  | ErrorFuncResult<TError>
+type FuncResult<
+  TData,
+  TError extends Error = { name: string; message: string }
+> = OkFuncResult<TData> | ErrorFuncResult<TError>
 
 interface FuncResultFactory {
   ok: <T>(data: T) => OkFuncResult<T>

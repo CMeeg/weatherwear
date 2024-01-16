@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
-import { forecast } from "../../../db/schema"
+import { forecast } from "~/db/schema"
 
 const connectionString = process.env.SUPABASE_DB_URL ?? ""
 

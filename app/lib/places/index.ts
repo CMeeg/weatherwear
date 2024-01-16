@@ -1,11 +1,8 @@
-interface LocationItem {
-  id: string
-  name: string
-}
+import type { FormListItem } from "~/lib/forms"
 
 interface LocationsApiResponse {
-  items: LocationItem[]
+  items: FormListItem[]
   error?: string
 }
 
-export type { LocationItem, LocationsApiResponse }
+export type { LocationsApiResponse }

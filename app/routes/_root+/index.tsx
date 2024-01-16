@@ -1,15 +1,18 @@
-import { redirect } from "@remix-run/node"
-import { useActionData, useNavigation, useSubmit } from "@remix-run/react"
+import { redirect, json } from "@remix-run/node"
+import {
+  useActionData,
+  useNavigation,
+  useSubmit,
+  useLoaderData
+} from "@remix-run/react"
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node"
 import { Form, Button } from "react-aria-components"
 import {
-  subjectItems,
-  fitItems,
-  styleItems,
-  wearForecastRequestValidator
-} from "~/lib/wear"
+  wearForecastRequestValidator,
+  getForecastRequestFormProps
+} from "~/lib/forecast/request.server"
+import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWeatherApi } from "~/lib/weather/api.server"
-import { createWearForecast } from "~/lib/wear/db.server"
 import { FormSelect, FormSelectItem } from "~/components/FormSelect"
 import { FormLocationInput } from "~/components/FormLocationInput"
 
@@ -48,9 +51,32 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // Create the forecast and redirect over to the forecast page
 
-  const forecast = await createWearForecast(forecastRequest, weatherForecast)
+  const forecastApi = createWearForecastApi()
+
+  const [forecast, forecastError] = await forecastApi.createForecast(
+    forecastRequest,
+    weatherForecast
+  )
+
+  if (forecastError) {
+    // TODO: Be a bit smarter about error messages depending on type of error returned
+    // TODO: This is a "general" error so shouldn't be displayed against a field
+    return {
+      errors: {
+        location: "Sorry we couldn't fetch your forecast. Please try again."
+      }
+    }
+  }
 
   return redirect(`/forecast/${forecast.url_slug}`)
+}
+
+export const loader = async () => {
+  const requestForm = getForecastRequestFormProps()
+
+  return json({
+    requestForm
+  })
 }
 
 export const meta: MetaFunction = () => {
@@ -75,6 +101,8 @@ export default function Index() {
   const navigation = useNavigation()
   const isSubmitting = navigation.state !== "idle"
 
+  const { requestForm } = useLoaderData<typeof loader>()
+
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Looking at the weather and wondering what to wear today?</h1>
@@ -97,10 +125,10 @@ export default function Index() {
             name="subject"
             label="I'm a "
             isRequired
-            items={subjectItems}
+            items={requestForm.subject.items}
           >
             {(item) => (
-              <FormSelectItem id={item.codename}>{item.name}</FormSelectItem>
+              <FormSelectItem id={item.id}>{item.name}</FormSelectItem>
             )}
           </FormSelect>
           <span>who likes to wear clothes </span>
@@ -108,10 +136,10 @@ export default function Index() {
             name="fit"
             label="made to fit "
             isRequired
-            items={fitItems}
+            items={requestForm.fit.items}
           >
             {(item) => (
-              <FormSelectItem id={item.codename}>{item.name}</FormSelectItem>
+              <FormSelectItem id={item.id}>{item.name}</FormSelectItem>
             )}
           </FormSelect>
           <span>and I&rsquo;d say </span>
@@ -119,10 +147,10 @@ export default function Index() {
             name="style"
             label="my style is "
             isRequired
-            items={styleItems}
+            items={requestForm.style.items}
           >
             {(item) => (
-              <FormSelectItem id={item.codename}>{item.name}</FormSelectItem>
+              <FormSelectItem id={item.id}>{item.name}</FormSelectItem>
             )}
           </FormSelect>
           <span>. </span>

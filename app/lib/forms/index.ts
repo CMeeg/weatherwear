@@ -11,4 +11,11 @@ class ValidationError extends Error {
   }
 }
 
+interface FormListItem {
+  id: string
+  name: string
+}
+
 export { ValidationError }
+
+export type { FormListItem }

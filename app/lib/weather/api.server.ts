@@ -14,6 +14,8 @@ const createWeatherApi = () => {
       const locationLower = location.toLowerCase()
 
       const weatherUrl = new URL("https://wttr.in")
+
+      // `, ` can cause locations to not match when but removing the space can fix it for some reason
       weatherUrl.pathname = locationLower.replaceAll(", ", ",")
       weatherUrl.search = new URLSearchParams({
         lang: requestCulture,

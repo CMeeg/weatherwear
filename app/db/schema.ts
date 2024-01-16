@@ -7,7 +7,7 @@ import {
   timestamp,
   uuid
 } from "drizzle-orm/pg-core"
-import type { WearLocation, WearProfile, WearSuggestion } from "~/lib/wear"
+import type { WearLocation, WearProfile, WearSuggestion } from "~/lib/forecast"
 import type { WeatherForecast } from "~/lib/weather"
 
 export const forecast = pgTable("forecast", {

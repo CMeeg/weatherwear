@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "remix vite:build",
-    "db:migrate": "tsx ./db/migrate.ts",
+    "db:migrate": "tsx ./app/db/migrate.ts",
     "dev": "node ./server.mjs",
     "drizzle-kit": "drizzle-kit",
     "env:init": "pwsh ./.azd/scripts/create-env-local.ps1",

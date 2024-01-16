@@ -1,7 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node"
 import { json } from "@remix-run/node"
 import { defaultLocale } from "~/lib/i18n"
-import type { LocationItem } from "~/lib/places"
+import type { FormListItem } from "~/lib/forms"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   // Get the query from the URL
@@ -29,7 +29,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     key: process.env.GOOGLE_MAPS_API_KEY ?? ""
   }).toString()
 
-  const locations: LocationItem[] = []
+  const locations: FormListItem[] = []
 
   try {
     const placesResponse = await fetch(placesUrl.toString())
