@@ -1,10 +1,10 @@
-import { redirect, json } from "@remix-run/node"
 import {
   useActionData,
   useNavigation,
   useSubmit,
   useLoaderData
 } from "@remix-run/react"
+import { redirect, json } from "@remix-run/node"
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node"
 import { Form, Button } from "react-aria-components"
 import {
@@ -114,6 +114,7 @@ export default function Index() {
         weather.
       </p>
 
+      {/* TODO: Use CSRF token to protect form */}
       <Form
         method="post"
         validationErrors={actionData?.errors}

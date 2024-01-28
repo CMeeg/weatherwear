@@ -1,6 +1,6 @@
 import { defer } from "@remix-run/node"
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node"
-import { useLoaderData, Await } from "@remix-run/react"
+import { useLoaderData, useLocation, Await } from "@remix-run/react"
 import { Suspense } from "react"
 import { useEventSource } from "remix-utils/sse/react"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
@@ -33,13 +33,19 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     throw new Response("Forecast not found.", { status: 404 })
   }
 
+  // Get the status messages
+
+  // TODO: Put these somewhere else
+  const statusMessages: Record<ForecastCompletionEventStatus, string> = {
+    fetching_suggestion: "Considering your options...",
+    generating_image: "Creating your look...",
+    completed: "All done!",
+    failed: "Something went wrong. How embarrassing."
+  }
+
   // Complete the forecast and return the result
 
   const forecastCompletionApi = createWearForecastCompletionApi(forecastApi)
-
-  // TODO: If the forecast is already complete then there is no need to defer
-  // if (forecastCompletionApi.isComplete(forecast)) {
-  // }
 
   const weatherWear = forecastCompletionApi
     .completeForecast(forecast)
@@ -57,15 +63,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       }
     })
 
-  const statusMessages: Record<ForecastCompletionEventStatus, string> = {
-    fetching_suggestion: "Considering your options...",
-    generating_image: "Creating your look...",
-    completed: "All done!",
-    failed: "Something went wrong. How embarrassing."
-  }
-
   return defer({
-    slug: forecast.url_slug,
     statusMessages,
     weatherWear
   })
@@ -83,11 +81,19 @@ export const meta: MetaFunction = () => {
 }
 
 export default function Index() {
-  const { slug, statusMessages, weatherWear } = useLoaderData<typeof loader>()
+  const { statusMessages, weatherWear } = useLoaderData<typeof loader>()
 
-  const status = useEventSource(`/forecast/completion/${slug}`, {
+  const location = useLocation()
+
+  const status = useEventSource(`${location.pathname}/completion`, {
     event: "status"
   })
+
+  const ForecastError = () => {
+    // TODO: useAsyncError, useful? https://remix.run/docs/en/main/hooks/use-async-error
+    // const error = useAsyncError()
+    return <p>{statusMessages["failed"]}</p>
+  }
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
@@ -101,10 +107,7 @@ export default function Index() {
           </p>
         }
       >
-        <Await
-          resolve={weatherWear}
-          errorElement={<p>{statusMessages["failed"]}</p>}
-        >
+        <Await resolve={weatherWear} errorElement={<ForecastError />}>
           {(weatherWear) => (
             <p>
               {/* TODO: Is there an image component I can use here */}
