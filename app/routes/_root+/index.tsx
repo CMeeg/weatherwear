@@ -69,7 +69,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
   }
 
-  return redirect(`/forecast/${forecast.url_slug}`)
+  return redirect(`/forecast/${forecast.urlSlug}`)
 }
 
 export const loader = async () => {

@@ -24,7 +24,7 @@ type ForecastCompletionEventStatus = ValueOf<
 
 interface ForecastCompletionEvent {
   id: string
-  url_slug: string
+  urlSlug: string
   status: ForecastCompletionEventStatus
 }
 
@@ -193,17 +193,17 @@ const generateImageFromSuggestion = async (
       ]),
       n: 1,
       size: "1024x1024",
-      response_format: "b64_json"
+      response_format: "url"
     })
 
-    const data = generation.data[0]?.b64_json ?? ""
+    const url = generation.data[0]?.url ?? ""
 
-    if (!data) {
+    if (!url) {
       // TODO: Custom error type
       throw new Error("Generated image returned with no data.")
     }
 
-    return result.ok(data)
+    return result.ok(url)
   } catch (error) {
     // TODO: https://platform.openai.com/docs/guides/images/error-handling
     return result.error(
@@ -215,7 +215,7 @@ const generateImageFromSuggestion = async (
 }
 
 const isComplete = (forecast: WearForecast): boolean => {
-  if (forecast.suggestion && forecast.image_id) {
+  if (forecast.suggestion && forecast.imagePath) {
     return true
   }
 
@@ -231,7 +231,7 @@ const createWearForecastCompletionApi = (forecastApi: ForecastApi) => {
       if (isComplete(forecast)) {
         forecastCompletionEventEmitter.emit({
           id: forecast.id,
-          url_slug: forecast.url_slug,
+          urlSlug: forecast.urlSlug,
           status: forecastCompletionEventStatus.completed
         })
 
@@ -248,7 +248,7 @@ const createWearForecastCompletionApi = (forecastApi: ForecastApi) => {
 
           forecastCompletionEventEmitter.emit({
             id: forecast.id,
-            url_slug: forecast.url_slug,
+            urlSlug: forecast.urlSlug,
             status: forecastCompletionEventStatus.fetchingSuggestion
           })
 
@@ -277,29 +277,29 @@ const createWearForecastCompletionApi = (forecastApi: ForecastApi) => {
           }
         }
 
-        if (forecast.suggestion && !forecast.image_id) {
+        if (forecast.suggestion && !forecast.imagePath) {
           // Generate the image based on the profile and suggestion
 
           forecastCompletionEventEmitter.emit({
             id: forecast.id,
-            url_slug: forecast.url_slug,
+            urlSlug: forecast.urlSlug,
             status: forecastCompletionEventStatus.generatingImage
           })
 
-          const [imageData, imageDataError] = await generateImageFromSuggestion(
+          const [imageUrl, imageUrlError] = await generateImageFromSuggestion(
             openAI,
             forecast
           )
 
-          if (imageDataError) {
+          if (imageUrlError) {
             // TODO: Deal with error
-            throw new Error(imageDataError.message)
+            throw new Error(imageUrlError.message)
           }
 
           // Upload the image to storage
 
           const [updatedForecast, updateForecastError] =
-            await forecastApi.addImageToForecast(forecast, imageData)
+            await forecastApi.addImageToForecast(forecast, imageUrl)
 
           if (updateForecastError) {
             // TODO: Deal with error
@@ -311,7 +311,7 @@ const createWearForecastCompletionApi = (forecastApi: ForecastApi) => {
 
         forecastCompletionEventEmitter.emit({
           id: forecast.id,
-          url_slug: forecast.url_slug,
+          urlSlug: forecast.urlSlug,
           status: forecastCompletionEventStatus.completed
         })
 
@@ -319,7 +319,7 @@ const createWearForecastCompletionApi = (forecastApi: ForecastApi) => {
       } catch (error) {
         forecastCompletionEventEmitter.emit({
           id: forecast.id,
-          url_slug: forecast.url_slug,
+          urlSlug: forecast.urlSlug,
           status: forecastCompletionEventStatus.failed
         })
 

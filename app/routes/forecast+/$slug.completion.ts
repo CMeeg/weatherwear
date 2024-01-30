@@ -31,7 +31,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   return eventStream(request.signal, function setup(send) {
     async function handle(completionEvent: ForecastCompletionEvent) {
-      if (completionEvent.url_slug !== params.slug) {
+      if (completionEvent.urlSlug !== params.slug) {
         // We don't care about this event
 
         return

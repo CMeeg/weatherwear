@@ -54,12 +54,13 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
       if (completionError) {
         // TODO: Error handling
+        console.error(completionError)
         throw new Error("Error completing forecast.")
       }
 
       return {
         text: completeForecast.suggestion?.advice ?? "",
-        image_url: forecastApi.getForecastImageUrl(completeForecast)
+        image_url: completeForecast.imagePath
       }
     })
 

@@ -13,7 +13,10 @@ import type {
 import type { WearForecastRequest } from "~/lib/forecast/request.server"
 import type { WeatherForecast } from "~/lib/weather"
 import { db, dbSchema } from "~/db/client.server"
-import { createSupabaseClient } from "~/supabase/client.server"
+import {
+  createBlobStorageClient,
+  createReadableStreamFromBody
+} from "~/azure/storage.server"
 import { getForecastRequestFormProps } from "~/lib/forecast/request.server"
 
 const fetchForecastFromSlug = async (
@@ -23,10 +26,10 @@ const fetchForecastFromSlug = async (
     const existing = await db
       .select()
       .from(dbSchema.public.forecast)
-      .where(eq(dbSchema.public.forecast.url_slug, urlSlug))
+      .where(eq(dbSchema.public.forecast.urlSlug, urlSlug))
 
     if (existing.length > 0) {
-      // url_slug has a unique constraint so there will be at most one
+      // urlSlug has a unique constraint so there will be at most one
       return result.ok(existing[0])
     }
 
@@ -68,7 +71,7 @@ const updateForecast = async (
 ): Promise<FuncResult<WearForecast>> => {
   const { id, ...update } = forecast
 
-  update.updated_at = new Date().toISOString()
+  update.updatedAt = new Date().toISOString()
 
   try {
     const updated = await db
@@ -139,10 +142,9 @@ const createWearForecastApi = () => {
           .insert(dbSchema.public.forecast)
           .values({
             id: uuid(),
-            created_at: new Date().toISOString(),
             location: location.data,
             date,
-            url_slug: urlSlug,
+            urlSlug: urlSlug,
             profile: profile.data,
             weather
           })
@@ -159,35 +161,58 @@ const createWearForecastApi = () => {
     updateForecast,
     addImageToForecast: async (
       forecast: WearForecast,
-      imageData: string
+      imageUrl: string
     ): Promise<FuncResult<WearForecast>> => {
-      // Convert the base64 string to a blob
-      const base64Response = await fetch(`data:image/png;base64,${imageData}`)
-      const blob = await base64Response.blob()
+      // Create a blob storage client and container (if not exists)
 
-      // Upload the blob to storage
-      // TODO: You need a Pro plan for image transformations so maybe i am better off with Azure blob storage plus ImageKit?
-      const { data, error } = await createSupabaseClient()
-        .storage.from("forecast")
-        .upload(forecast.id, blob, { upsert: true })
+      const storageClient = createBlobStorageClient()
 
-      if (error) {
-        return result.error(error)
+      const containerName = "forecast"
+      const containerClient = storageClient.getContainerClient(containerName)
+      const containerExists = await containerClient.createIfNotExists({
+        access: "blob"
+      })
+
+      if (
+        containerExists.errorCode &&
+        containerExists.errorCode !== "ContainerAlreadyExists"
+      ) {
+        return result.error(
+          new Error(`Container error: ${containerExists.errorCode}`)
+        )
       }
 
-      // TODO: Actual return data doesn't match the type
-      const image = data as { path: string; id: string; fullPath: string }
+      const blobClient = containerClient.getBlockBlobClient(
+        `${forecast.id}.png`
+      )
 
-      forecast.image_id = image.id
+      // Fetch the image and upload to storage
+
+      const imageResponse = await fetch(imageUrl)
+
+      if (!imageResponse.ok) {
+        return result.error(
+          new Error(
+            `Request for image returned status ${imageResponse.status}: ${imageResponse.statusText}`
+          )
+        )
+      }
+
+      const uploadResult = await blobClient.uploadStream(
+        createReadableStreamFromBody(imageResponse.body)
+      )
+
+      if (uploadResult.errorCode) {
+        return result.error(
+          new Error(`Image upload error: ${uploadResult.errorCode}`)
+        )
+      }
+
+      // TODO: What do we actually want to store in the database?
+      // TODO: Use ImageKit for image transformations?
+      forecast.imagePath = blobClient.url
 
       return await updateForecast(forecast)
-    },
-    getForecastImageUrl: (forecast: WearForecast) => {
-      const { data } = createSupabaseClient()
-        .storage.from("forecast")
-        .getPublicUrl(forecast.id)
-
-      return data.publicUrl
     }
   }
 }

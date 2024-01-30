@@ -7,16 +7,14 @@ There are some pre-requisites for development. You will need:
 * An OpenAI API Key with access to GPT4 and Dall-E 3
 * A Google Maps Places API key
 * Node.js >= v18
-* Docker Desktop
+* A Neon (Postgres) database
+* [Azurite](https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json&tabs=visual-studio-code%2Cblob-storage#install-azurite)
 
 Then:
 
 ```bash
 # Install dependencies
 npm install
-
-# Start Supabase services
-npm run supabase start
 
 # Initialise your `.env.local` file
 npm run env:init
@@ -26,7 +24,9 @@ npm run env:init
 code .env.local
 
 # Run database migrations
-npm run db:migrate
+npm run db:migrate:run
+
+# Start the Azurite Blob Service
 
 # Start the dev server
 npm run dev

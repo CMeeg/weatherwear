@@ -1,5 +1,5 @@
 {
-  "id": "e1da9bcb-1ad3-4151-92b3-4dc0622b9e3c",
+  "id": "965cf944-0b59-4051-87a7-1ffa2532ae39",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -16,13 +16,14 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },
@@ -62,9 +63,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "image_id": {
-          "name": "image_id",
-          "type": "uuid",
+        "image_path": {
+          "name": "image_path",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }

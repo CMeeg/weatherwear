@@ -6,12 +6,12 @@ import postgres from "postgres"
 dotenv.config()
 dotenv.config({ path: `.env.local`, override: true })
 
-const connectionString = process.env.SUPABASE_DB_URL ?? ""
+const connectionString = process.env.DATABASE_URL ?? ""
 
-const sql = postgres(connectionString, { max: 1 })
+const client = postgres(connectionString, { max: 1 })
 
-const db = drizzle(sql)
+const db = drizzle(client)
 
-await migrate(db, { migrationsFolder: "./db/migrations" })
+await migrate(db, { migrationsFolder: "./app/db/migrations" })
 
-await sql.end()
+await client.end()

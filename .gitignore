@@ -1,4 +1,5 @@
 .azure/
+.azurite/
 .cache/
 build/
 infra/env-vars.json
