@@ -1,18 +1,10 @@
-import {
-  BlobServiceClient,
-  StorageSharedKeyCredential
-} from "@azure/storage-blob"
+import { BlobServiceClient } from "@azure/storage-blob"
 import { Readable } from "node:stream"
 
 const createBlobStorageClient = () => {
-  const url = process.env.STORAGE_URL ?? ""
-  const accountName = process.env.STORAGE_ACCOUNT_NAME ?? ""
-  const accountKey = process.env.STORAGE_ACCOUNT_KEY ?? ""
+  const connectionString = process.env.STORAGE_CONNECTION_STRING ?? ""
 
-  return new BlobServiceClient(
-    url,
-    new StorageSharedKeyCredential(accountName, accountKey)
-  )
+  return BlobServiceClient.fromConnectionString(connectionString)
 }
 
 const createReadableStreamFromBody = (

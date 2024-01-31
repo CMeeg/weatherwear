@@ -91,6 +91,8 @@ jobs:
         run: npm run env:init
         shell: pwsh
         env:
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
+          GOOGLE_MAPS_API_KEY: ${{ vars.GOOGLE_MAPS_API_KEY }}
           OPENAI_API_KEY: ${{ vars.OPENAI_API_KEY }}
           SERVICE_WEB_MIN_LOG_LEVEL: ${{ vars.SERVICE_WEB_MIN_LOG_LEVEL }}
           SERVICE_WEB_CONTAINER_CPU_CORE_COUNT: ${{ vars.SERVICE_WEB_CONTAINER_CPU_CORE_COUNT }}

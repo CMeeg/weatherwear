@@ -22,6 +22,7 @@ param containerAppName string = ''
 param containerRegistryName string = ''
 param logAnalyticsWorkspaceName string = ''
 param resourceGroupName string = ''
+param storageAccountName string = ''
 
 param webAppServiceCdnEndpointName string = ''
 param webAppServiceCdnProfileName string = ''
@@ -153,6 +154,20 @@ module webAppServiceCdn './cdn/cdn.bicep' = {
   }
 }
 
+var storageName = !empty(storageAccountName) ? storageAccountName : buildProjectResourceName(abbrs.storage.storage_account, projectName, environmentName, resourceToken, false)
+
+module storage './storage/storage-account.bicep' = {
+  name: 'storageAccount'
+  scope: resourceGroup
+  params: {
+    name: storageName
+    location: location
+    tags: tags
+  }
+}
+
+var storageConnectionString = storage.outputs.connectionString
+
 module webAppServiceContainerApp './web-app.bicep' = {
   name: '${webAppServiceName}-container-app'
   scope: resourceGroup
@@ -192,6 +207,14 @@ module webAppServiceContainerApp './web-app.bicep' = {
         value: webAppServiceCdn.outputs.endpointUri
       }
       {
+        name: 'DATABASE_URL'
+        value: envVars.DATABASE_URL
+      }
+      {
+        name: 'GOOGLE_MAPS_API_KEY'
+        value: envVars.GOOGLE_MAPS_API_KEY
+      }
+      {
         name: 'NODE_ENV'
         value: stringOrDefault(envVars.NODE_ENV, 'production')
       }
@@ -214,6 +237,10 @@ module webAppServiceContainerApp './web-app.bicep' = {
       {
         name: 'SERVICE_WEB_SERVICE_NAME'
         value: webAppServiceName
+      }
+      {
+        name: 'STORAGE_CONNECTION_STRING'
+        value: storageConnectionString
       }
     ]
     targetPort: 3000
@@ -241,3 +268,4 @@ output BUILD_ID string = buildId
 output CDN_HOSTNAME string = webAppServiceCdn.outputs.endpointHostName
 output CDN_URL string = webAppServiceCdn.outputs.endpointUri
 output SERVICE_WEB_ENDPOINTS string[] = [webAppServiceUri]
+output STORAGE_CONNECTION_STRING string = storageConnectionString
