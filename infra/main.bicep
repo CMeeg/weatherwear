@@ -166,6 +166,7 @@ module storage './storage/storage-account.bicep' = {
   }
 }
 
+var storageUrl = storage.outputs.url
 var storageConnectionString = storage.outputs.connectionString
 
 module webAppServiceContainerApp './web-app.bicep' = {
@@ -215,6 +216,10 @@ module webAppServiceContainerApp './web-app.bicep' = {
         value: envVars.GOOGLE_MAPS_API_KEY
       }
       {
+        name: 'IMAGEKIT_ENDPOINT_URL'
+        value: envVars.IMAGEKIT_ENDPOINT_URL
+      }
+      {
         name: 'NODE_ENV'
         value: stringOrDefault(envVars.NODE_ENV, 'production')
       }
@@ -241,6 +246,14 @@ module webAppServiceContainerApp './web-app.bicep' = {
       {
         name: 'STORAGE_CONNECTION_STRING'
         value: storageConnectionString
+      }
+      {
+        name: 'STORAGE_CONTAINER_NAME'
+        value: envVars.STORAGE_CONTAINER_NAME
+      }
+      {
+        name: 'STORAGE_URL'
+        value: storageUrl
       }
     ]
     targetPort: 3000

@@ -89,6 +89,49 @@ const updateForecast = async (
   }
 }
 
+const getImageUrl = (blobUrl: string): string => {
+  const imageKitEndpointUrl = process.env.IMAGEKIT_ENDPOINT_URL
+
+  if (!imageKitEndpointUrl) {
+    // imagekit isn't available
+
+    return blobUrl
+  }
+
+  const originalUrl = new URL(blobUrl)
+
+  if (
+    originalUrl.hostname === "localhost" ||
+    originalUrl.hostname === "127.0.0.1"
+  ) {
+    // imagekit isn't setup for localhost currently
+
+    return blobUrl
+  }
+
+  // Try to replace the storage URL with the imagekit URL
+
+  const storageUrl = process.env.STORAGE_URL
+  const storageContainerName = process.env.STORAGE_CONTAINER_NAME
+
+  if (!storageUrl || !storageContainerName) {
+    return blobUrl
+  }
+
+  const storageEndpointUrl = new URL(storageUrl)
+  storageEndpointUrl.pathname = storageContainerName
+
+  let imagePath = blobUrl
+    .toLowerCase()
+    .replace(storageEndpointUrl.toString().toLowerCase(), "")
+
+  if (imagePath.startsWith("/")) {
+    imagePath = imagePath.slice(1)
+  }
+
+  return `${imageKitEndpointUrl}/${imagePath}`
+}
+
 const createWearForecastApi = () => {
   return {
     fetchForecastFromSlug,
@@ -167,7 +210,7 @@ const createWearForecastApi = () => {
 
       const storageClient = createBlobStorageClient()
 
-      const containerName = "forecast"
+      const containerName = process.env.STORAGE_CONTAINER_NAME ?? "forecast"
       const containerClient = storageClient.getContainerClient(containerName)
       const containerExists = await containerClient.createIfNotExists({
         access: "blob"
@@ -209,8 +252,9 @@ const createWearForecastApi = () => {
       }
 
       // TODO: What do we actually want to store in the database?
-      // TODO: Use ImageKit for image transformations?
-      forecast.imagePath = blobClient.url
+      // TODO: E.g. also store prompt (alt text), revised prompt, width, height?
+      // TODO: Maybe also store a placeholder (see https://unpic.pics/placeholder/)?
+      forecast.imagePath = getImageUrl(blobClient.url)
 
       return await updateForecast(forecast)
     }

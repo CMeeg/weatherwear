@@ -6,6 +6,7 @@ import { useEventSource } from "remix-utils/sse/react"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWearForecastCompletionApi } from "~/lib/forecast/completion.server"
 import type { ForecastCompletionEventStatus } from "~/lib/forecast/completion.server"
+import { Image } from "@unpic/react"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   // Validate params
@@ -47,7 +48,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   const forecastCompletionApi = createWearForecastCompletionApi(forecastApi)
 
-  const weatherWear = forecastCompletionApi
+  const completion = forecastCompletionApi
     .completeForecast(forecast)
     .then((completionResult) => {
       const [completeForecast, completionError] = completionResult
@@ -66,7 +67,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   return defer({
     statusMessages,
-    weatherWear
+    completion
   })
 }
 
@@ -82,7 +83,7 @@ export const meta: MetaFunction = () => {
 }
 
 export default function Index() {
-  const { statusMessages, weatherWear } = useLoaderData<typeof loader>()
+  const { statusMessages, completion } = useLoaderData<typeof loader>()
 
   const location = useLocation()
 
@@ -100,6 +101,13 @@ export default function Index() {
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Your forecast for today</h1>
 
+      {/* TODO: Fix error - This Suspense boundary received an update before it finished hydrating. */}
+      {/* https://github.com/remix-run/remix/issues/5165
+      https://github.com/remix-run/remix/issues/5153
+      https://github.com/remix-run/remix/issues/5760
+      https://github.com/remix-run/remix/issues/4822
+      https://github.com/kiliman/remix-hydration-fix
+      https://github.com/Xiphe/remix-island */}
       <Suspense
         fallback={
           <p>
@@ -108,19 +116,26 @@ export default function Index() {
           </p>
         }
       >
-        <Await resolve={weatherWear} errorElement={<ForecastError />}>
-          {(weatherWear) => (
+        <Await resolve={completion} errorElement={<ForecastError />}>
+          {(forecast) => (
             <p>
               {/* TODO: Is there an image component I can use here */}
-              {weatherWear.image_url && (
-                <img
-                  src={`${weatherWear.image_url}?width=1024&quality=80`}
+              {forecast.image_url && (
+                // <img
+                //   src={`${resolved.image_url}?tr=w-640&h-640&fm-auto`}
+                //   alt=""
+                //   style={{ height: "80vh" }}
+                // />
+                <Image
+                  src={forecast.image_url}
+                  width={1024}
+                  height={1024}
                   alt=""
-                  style={{ height: "80vh" }}
+                  // priority={true}
                 />
               )}
               <br />
-              {weatherWear.text}
+              {forecast.text}
             </p>
           )}
         </Await>
