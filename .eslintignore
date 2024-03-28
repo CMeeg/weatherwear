@@ -1,6 +1,8 @@
 /.cache
 /build
 /node_modules
+!**/.server
+!**/.client
 
 !.eslintrc.cjs
 !.prettierrc.cjs

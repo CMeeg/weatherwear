@@ -1,17 +1,16 @@
 import {
-  Meta,
   Links,
-  useNavigate,
+  Meta,
   Outlet,
-  ScrollRestoration,
   Scripts,
-  LiveReload,
+  ScrollRestoration,
+  useNavigate,
   useRouteError,
   isRouteErrorResponse
 } from "@remix-run/react"
 import { useLocale, I18nProvider, RouterProvider } from "react-aria-components"
 
-export default function App() {
+export function Layout({ children }: { children: React.ReactNode }) {
   const { locale, direction } = useLocale()
   const navigate = useNavigate()
 
@@ -25,16 +24,17 @@ export default function App() {
           <Links />
         </head>
         <body>
-          <RouterProvider navigate={navigate}>
-            <Outlet />
-          </RouterProvider>
+          <RouterProvider navigate={navigate}>{children}</RouterProvider>
           <ScrollRestoration />
           <Scripts />
-          <LiveReload />
         </body>
       </html>
     </I18nProvider>
   )
+}
+
+export default function App() {
+  return <Outlet />
 }
 
 // TODO: ErrorBoundary: https://remix.run/docs/en/main/guides/errors

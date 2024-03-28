@@ -14,9 +14,19 @@
       "~/*": ["./app/*"]
     },
     "resolveJsonModule": true,
+    "skipLibCheck": true,
     "strict": true,
-    "target": "ES2022"
+    "target": "ES2022",
+    "types": ["@remix-run/node", "vite/client", "google.maps"]
   },
   "exclude": ["node_modules"],
-  "include": ["env.d.ts", "**/*.ts", "**/*.tsx"]
+  "include": [
+    "env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/.server/**/*.ts",
+    "**/.server/**/*.tsx",
+    "**/.client/**/*.ts",
+    "**/.client/**/*.tsx"
+  ]
 }

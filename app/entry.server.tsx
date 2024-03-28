@@ -1,15 +1,15 @@
 import { PassThrough } from "node:stream"
-
 import type { AppLoadContext, EntryContext } from "@remix-run/node"
 import { createReadableStreamFromReadable } from "@remix-run/node"
 import { RemixServer } from "@remix-run/react"
-import isbot from "isbot"
+import { isbot } from "isbot"
 import { renderToPipeableStream } from "react-dom/server"
 import dotenv from "dotenv"
 import { getLocalizationScript } from "react-aria-components/i18n"
 import { defaultLocale } from "~/lib/i18n"
 
 // TODO: This is a workaround for a [issue in Remix](https://github.com/remix-run/remix/discussions/7875) where environment variables are not available on the server via `import.meta.env` at runtime - this makes them available via `process.env`
+// TODO: Move to using just `.env` and this won't be a problem and can be removed (update gitignore also)
 dotenv.config()
 if (process.env.NODE_ENV === "production") {
   dotenv.config({ path: `.env.production`, override: true })
@@ -28,7 +28,7 @@ export default function handleRequest(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   loadContext: AppLoadContext
 ) {
-  return isbot(request.headers.get("user-agent"))
+  return isbot(request.headers.get("user-agent") || "")
     ? handleBotRequest(
         request,
         responseStatusCode,
