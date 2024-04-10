@@ -16,7 +16,7 @@ const transformLocation = (location: string): string => {
   }
 
   // We will assume that the first part is the city
-  const city = parts[0].trim()
+  const city = parts[0]?.trim() ?? ""
 
   // We will assume that the last part is the country
   let country = parts.pop()?.trim() ?? ""

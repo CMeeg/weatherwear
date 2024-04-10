@@ -2,12 +2,12 @@
 .azurite/
 .cache/
 build/
-infra/env-vars.json
 node_modules/
 .DS_Store
-.env*.local
+.env
 .env.azure
 notes.md
 npm-debug.log*
 vite.config.ts.timestamp*
 *.tsbuildinfo
+TODO.md

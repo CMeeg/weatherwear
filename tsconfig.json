@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "baseUrl": ".",
     "esModuleInterop": true,
@@ -8,8 +9,11 @@
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "module": "ESNext",
+    "moduleDetection": "force",
     "moduleResolution": "Bundler",
+    // Vite takes care of building everything, not tsc.
     "noEmit": true,
+    "noUncheckedIndexedAccess": true,
     "paths": {
       "~/*": ["./app/*"]
     },
@@ -20,13 +24,5 @@
     "types": ["@remix-run/node", "vite/client", "google.maps"]
   },
   "exclude": ["node_modules"],
-  "include": [
-    "env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/.server/**/*.ts",
-    "**/.server/**/*.tsx",
-    "**/.client/**/*.ts",
-    "**/.client/**/*.tsx"
-  ]
+  "include": ["env.d.ts", "**/*.ts", "**/*.tsx"]
 }

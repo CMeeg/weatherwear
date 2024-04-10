@@ -20,7 +20,7 @@ module.exports = {
   overrides: [
     // React
     {
-      files: ["**/*.{js,jsx,ts,tsx}"],
+      files: ["**/*.{jsx,tsx}"],
       plugins: ["react", "jsx-a11y"],
       extends: [
         "plugin:react/recommended",
@@ -63,12 +63,24 @@ module.exports = {
         "plugin:@typescript-eslint/recommended",
         "plugin:import/recommended",
         "plugin:import/typescript"
-      ]
+      ],
+      rules: {
+        "@typescript-eslint/ban-ts-comment": [
+          "error",
+          {
+            "ts-expect-error": "allow-with-description",
+            "ts-ignore": "allow-with-description",
+            "ts-nocheck": true,
+            "ts-check": false,
+            minimumDescriptionLength: 3
+          }
+        ]
+      }
     },
 
     // Node
     {
-      files: [".eslintrc.cjs", "server.mjs"],
+      files: ["**/*.{js,cjs,mjs,ts}"],
       env: {
         node: true
       }

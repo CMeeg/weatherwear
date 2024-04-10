@@ -4,7 +4,13 @@ import tsconfigPaths from "vite-tsconfig-paths"
 import localesPlugin from "@react-aria/optimize-locales-plugin"
 import { flatRoutes } from "remix-flat-routes"
 
+let base = process.env.CDN_URL ?? "/"
+if (!base.endsWith("/")) {
+  base = `${base}/`
+}
+
 export default defineConfig({
+  base,
   plugins: [
     remix({
       // ignore all files in routes folder to prevent default remix convention from picking up routes

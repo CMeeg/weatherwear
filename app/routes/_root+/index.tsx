@@ -7,6 +7,7 @@ import {
 import { redirect, json } from "@remix-run/node"
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node"
 import { Form, Button } from "react-aria-components"
+import { getCdnUrl } from "~/lib/url"
 import {
   wearForecastRequestValidator,
   getForecastRequestFormProps
@@ -76,18 +77,29 @@ export const loader = async () => {
   const requestForm = getForecastRequestFormProps()
 
   return json({
-    requestForm
+    requestForm,
+    meta: [
+      { title: "WeatherWear" },
+      {
+        name: "description",
+        content:
+          "Let me tell you what to wear today based on your local weather."
+      },
+      {
+        tagName: "link",
+        rel: "icon",
+        href: getCdnUrl("/favicon.ico")
+      }
+    ]
   })
 }
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "WeatherWear" },
-    {
-      name: "description",
-      content: "Let me tell you what to wear today based on your local weather."
-    }
-  ]
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) {
+    return []
+  }
+
+  return data.meta
 }
 
 export default function Index() {

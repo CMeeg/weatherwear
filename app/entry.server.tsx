@@ -4,59 +4,35 @@ import { createReadableStreamFromReadable } from "@remix-run/node"
 import { RemixServer } from "@remix-run/react"
 import { isbot } from "isbot"
 import { renderToPipeableStream } from "react-dom/server"
-import dotenv from "dotenv"
+import { parseProcessEnv, getClientEnv } from "~/lib/env.server"
+import { NonceContext } from "~/components/NonceContext"
 import { getLocalizationScript } from "react-aria-components/i18n"
 import { defaultLocale } from "~/lib/i18n"
 
-// TODO: This is a workaround for a [issue in Remix](https://github.com/remix-run/remix/discussions/7875) where environment variables are not available on the server via `import.meta.env` at runtime - this makes them available via `process.env`
-// TODO: Move to using just `.env` and this won't be a problem and can be removed (update gitignore also)
-dotenv.config()
-if (process.env.NODE_ENV === "production") {
-  dotenv.config({ path: `.env.production`, override: true })
-} else {
-  dotenv.config({ path: `.env.development`, override: true })
-}
-dotenv.config({ path: `.env.local`, override: true })
-
 const ABORT_DELAY = 30_000
 
-export default function handleRequest(
-  request: Request,
-  responseStatusCode: number,
-  responseHeaders: Headers,
-  remixContext: EntryContext,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadContext: AppLoadContext
-) {
-  return isbot(request.headers.get("user-agent") || "")
-    ? handleBotRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        remixContext
-      )
-    : handleBrowserRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        remixContext
-      )
-}
+parseProcessEnv()
+global.ENV = getClientEnv()
 
 function handleBotRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
+  loadContext: AppLoadContext
 ) {
+  const nonce = loadContext.cspNonce
+
   return new Promise((resolve, reject) => {
     let shellRendered = false
     const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
+      <NonceContext.Provider value={nonce}>
+        <RemixServer
+          context={remixContext}
+          url={request.url}
+          abortDelay={ABORT_DELAY}
+        />
+      </NonceContext.Provider>,
       {
         onAllReady() {
           shellRendered = true
@@ -85,7 +61,8 @@ function handleBotRequest(
           if (shellRendered) {
             console.error(error)
           }
-        }
+        },
+        nonce
       }
     )
 
@@ -97,18 +74,23 @@ function handleBrowserRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
+  loadContext: AppLoadContext
 ) {
+  const nonce = loadContext.cspNonce
+
   const lang = defaultLocale.culture
 
   return new Promise((resolve, reject) => {
     let shellRendered = false
     const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
+      <NonceContext.Provider value={nonce}>
+        <RemixServer
+          context={remixContext}
+          url={request.url}
+          abortDelay={ABORT_DELAY}
+        />
+      </NonceContext.Provider>,
       {
         bootstrapScriptContent: getLocalizationScript(lang),
         onShellReady() {
@@ -138,10 +120,43 @@ function handleBrowserRequest(
           if (shellRendered) {
             console.error(error)
           }
-        }
+        },
+        nonce
       }
     )
 
     setTimeout(abort, ABORT_DELAY)
   })
+}
+
+function isBotRequest(userAgent: string | null) {
+  if (!userAgent) {
+    return false
+  }
+
+  return isbot(userAgent)
+}
+
+export default function handleRequest(
+  request: Request,
+  responseStatusCode: number,
+  responseHeaders: Headers,
+  remixContext: EntryContext,
+  loadContext: AppLoadContext
+) {
+  return isBotRequest(request.headers.get("user-agent"))
+    ? handleBotRequest(
+        request,
+        responseStatusCode,
+        responseHeaders,
+        remixContext,
+        loadContext
+      )
+    : handleBrowserRequest(
+        request,
+        responseStatusCode,
+        responseHeaders,
+        remixContext,
+        loadContext
+      )
 }

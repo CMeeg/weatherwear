@@ -3,7 +3,6 @@ param endpointName string
 param location string = resourceGroup().location
 param tags object = {}
 param originHostName string
-param buildId string
 
 var originUri = 'https://${originHostName}'
 
@@ -51,6 +50,8 @@ resource endpoint 'Microsoft.Cdn/profiles/endpoints@2022-11-01-preview' = {
     ]
     deliveryPolicy: {
       rules: [
+        // Add a rule to enable CORS
+        // https://learn.microsoft.com/en-us/azure/cdn/cdn-cors
         {
           name: 'CORSOrigin'
           order: 1
@@ -77,65 +78,6 @@ resource endpoint 'Microsoft.Cdn/profiles/endpoints@2022-11-01-preview' = {
                 headerAction: 'Overwrite'
                 headerName: 'Access-Control-Allow-Origin'
                 value: originUri
-                typeName: 'DeliveryRuleHeaderActionParameters'
-              }
-            }
-          ]
-        }
-        {
-          name: 'CORSNext'
-          order: 2
-          conditions: [
-            {
-              name: 'UrlPath'
-              parameters: {
-                operator: 'BeginsWith'
-                negateCondition: false
-                matchValues: [
-                  '_next/'
-                ]
-                transforms: []
-                typeName: 'DeliveryRuleUrlPathMatchConditionParameters'
-              }
-            }
-          ]
-          actions: [
-            {
-              name: 'ModifyResponseHeader'
-              parameters: {
-                headerAction: 'Overwrite'
-                headerName: 'Access-Control-Allow-Origin'
-                value: originUri
-                typeName: 'DeliveryRuleHeaderActionParameters'
-              }
-            }
-          ]
-        }
-        {
-          name: 'NoCompressAtOrigin'
-          order: 3
-          conditions: [
-            {
-              name: 'UrlPath'
-              parameters: {
-                operator: 'BeginsWith'
-                negateCondition: false
-                matchValues: [
-                  '_next/'
-                  '${buildId}/'
-                ]
-                transforms: []
-                typeName: 'DeliveryRuleUrlPathMatchConditionParameters'
-              }
-            }
-          ]
-          actions: [
-            {
-              name: 'ModifyRequestHeader'
-              parameters: {
-                headerAction: 'Delete'
-                headerName: 'Accept-Encoding'
-                value: null
                 typeName: 'DeliveryRuleHeaderActionParameters'
               }
             }

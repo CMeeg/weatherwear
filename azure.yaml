@@ -4,13 +4,20 @@ name: weatherwear
 hooks:
   preprovision:
     shell: pwsh
+    interactive: true
     run: ./.azd/hooks/preprovision.ps1
   postprovision:
     shell: pwsh
+    interactive: true
     run: ./.azd/hooks/postprovision.ps1
+workflows:
+  up:
+  - azd: provision
+  - azd: package --all
+  - azd: deploy --all
 services:
-  web:
-    project: ./
+  web-app:
+    project: .
     language: js
     host: containerapp
     dist: build

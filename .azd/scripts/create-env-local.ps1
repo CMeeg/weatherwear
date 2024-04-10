@@ -1,8 +1,8 @@
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Create a `.env.local` file by merging values from the current environment with a template
+# Create a `.env` file by merging values from the current environment with a template
 
-$templatePath = Join-Path $scriptDir "../../.env.local.template"
+$templatePath = Join-Path $scriptDir "../../.env.template"
 
 if (!(Test-Path $templatePath -PathType Leaf)) {
     # Template file does not exist so we can't go any further
@@ -10,12 +10,12 @@ if (!(Test-Path $templatePath -PathType Leaf)) {
     return
 }
 
-$outputPath = Join-Path $scriptDir "../../.env.local"
+$outputPath = Join-Path $scriptDir "../../.env"
 
 if (Test-Path $outputPath -PathType Leaf) {
-    # We only want to create the `.env.local` file if it does not already exist
-    # In the development environment the developer should be in control of their `.env.local` file so it should exist
-    # In CI the `.env.local` file should not exist as it should not be comitted to the repo
+    # We only want to create the `.env` file if it does not already exist
+    # In the development environment the developer should be in control of their `.env` file so it should exist
+    # In CI the `.env` file should not exist as it should not be comitted to the repo
 
     return
 }
@@ -25,6 +25,7 @@ if (Test-Path $outputPath -PathType Leaf) {
 $template = Get-Content -raw $templatePath | ConvertFrom-StringData
 
 # For each key in the template, check if there is a corresponding environment variable and if so, add it to an object
+# This is primarily of use in a CI/CD environment where the environment variables are set by the CI/CD system, but we only want to set the keys that also exist in the template
 
 $envVars = @{}
 

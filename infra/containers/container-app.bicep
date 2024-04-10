@@ -2,17 +2,16 @@ param name string
 param location string = resourceGroup().location
 param tags object = {}
 param containerAppEnvironmentId string
-param userAssignedIdentityId string
 param containerRegistryName string
-
+param userAssignedIdentityId string
 param allowedOrigins array = []
-param certificateId string = ''
 param containerCpuCoreCount string = '0.5'
 param containerMaxReplicas int = 1
 param containerMemory string = '1.0Gi'
 param containerMinReplicas int = 0
 param containerName string = 'main'
 param customDomainName string = ''
+param customDomainCertificateId string = ''
 param env array = []
 param external bool = true
 param imageName string = ''
@@ -47,8 +46,8 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
         customDomains: !empty(customDomainName) ? [
           {
             name: customDomainName
-            certificateId: !empty(certificateId) ? certificateId : null
-            bindingType: !empty(certificateId) ? 'SniEnabled' : 'Disabled'
+            certificateId: !empty(customDomainCertificateId) ? customDomainCertificateId : null
+            bindingType: !empty(customDomainCertificateId) ? 'SniEnabled' : 'Disabled'
           }
         ] : null
       } : null

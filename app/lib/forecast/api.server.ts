@@ -30,7 +30,7 @@ const fetchForecastFromSlug = async (
 
     if (existing.length > 0) {
       // urlSlug has a unique constraint so there will be at most one
-      return result.ok(existing[0])
+      return result.ok(existing[0]!)
     }
 
     return result.ok(null)
@@ -80,7 +80,7 @@ const updateForecast = async (
       .where(eq(dbSchema.public.forecast.id, id))
       .returning()
 
-    return result.ok(updated[0])
+    return result.ok(updated[0]!)
   } catch (error) {
     // TODO: TypeScript erorrs!
     const message = error instanceof Error ? error.message : "Unknown error"
@@ -193,7 +193,7 @@ const createWearForecastApi = () => {
           })
           .returning()
 
-        return result.ok(forecast[0])
+        return result.ok(forecast[0]!)
       } catch (error) {
         // TODO: TypeScript erorrs!
         const message = error instanceof Error ? error.message : "Unknown error"
