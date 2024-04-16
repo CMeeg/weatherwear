@@ -47,9 +47,9 @@
     "openai": "^4.24.1",
     "pino": "^8.19.0",
     "postgres": "^3.4.4",
-    "react": "^18.2.0",
+    "react": "18.3.0-canary-c3048aab4-20240326",
     "react-aria-components": "^1.0.0",
-    "react-dom": "^18.2.0",
+    "react-dom": "18.3.0-canary-c3048aab4-20240326",
     "remix-utils": "^7.5.0",
     "remix-validated-form": "^5.1.5",
     "uuid": "^9.0.1",
@@ -83,5 +83,9 @@
     "typescript": "^5.3.3",
     "vite": "^5.1.4",
     "vite-tsconfig-paths": "^4.2.1"
+  },
+  "overrides": {
+    "react": "18.3.0-canary-c3048aab4-20240326",
+    "react-dom": "18.3.0-canary-c3048aab4-20240326"
   }
 }
