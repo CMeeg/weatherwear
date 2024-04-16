@@ -44,6 +44,7 @@
     "helmet": "^7.1.0",
     "isbot": "^5.1.0",
     "morgan": "^1.10.0",
+    "open-props": "^1.7.2",
     "openai": "^4.24.1",
     "pino": "^8.19.0",
     "postgres": "^3.4.4",
@@ -56,6 +57,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@csstools/postcss-global-data": "^2.1.1",
     "@react-aria/optimize-locales-plugin": "^1.0.0",
     "@remix-run/dev": "^2.8.1",
     "@types/compression": "^1.7.5",
@@ -77,6 +79,9 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "pino-pretty": "^10.3.1",
+    "postcss-custom-media": "^10.0.4",
+    "postcss-jit-props": "^1.0.14",
+    "postcss-preset-env": "^9.5.5",
     "prettier": "^3.1.1",
     "remix-flat-routes": "^0.6.4",
     "tsx": "^4.7.0",

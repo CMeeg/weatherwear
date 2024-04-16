@@ -19,9 +19,9 @@ npm install
 # Initialise your `.env.local` file
 npm run env:init
 
-# Edit your `.env.local` file and populate vars as appropriate
+# Edit your `.env` file and populate vars as appropriate
 # VS Code used as an example - use whatever editor you want
-code .env.local
+code .env
 
 # Run database migrations
 npm run db:migrate:run

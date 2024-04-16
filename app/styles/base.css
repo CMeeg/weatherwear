@@ -1,0 +1,18 @@
+/* TODO: Remove these styles - they are just to test postcss and openprops are working */
+html {
+  --text-1: var(--gray-9);
+  --text-2: var(--gray-7);
+
+  @media (--OSdark) {
+    --text-1: var(--gray-1);
+    --text-2: var(--gray-2);
+  }
+}
+
+h1 {
+  color: var(--purple-10);
+
+  @media (--OSdark) {
+    color: var(--purple-4);
+  }
+}

@@ -17,6 +17,8 @@ import { useNonce } from "~/components/NonceContext"
 import { AppInsightsClient } from "~/components/AppInsights/Client"
 import { ClientEnvScript } from "~/components/ClientEnvScript"
 import { useLocale, I18nProvider, RouterProvider } from "react-aria-components"
+import "open-props/normalize.min.css"
+import "~/styles/base.css"
 
 export const links: LinksFunction = () => {
   const links: ReturnType<LinksFunction> = []
