@@ -14,7 +14,7 @@ import {
 } from "~/lib/forecast/request.server"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWeatherApi } from "~/lib/weather/api.server"
-import { FormLocationInput } from "~/components/FormLocationInput"
+import { GooglePlacesAutocomplete } from "~/components/Forms/GooglePlacesAutocomplete"
 import { Select, SelectItem } from "~/components/Forms/Select"
 import { Button } from "~/components/Forms/Button"
 import css from "./index.module.css"
@@ -134,11 +134,17 @@ export default function Index() {
         onSubmit={onSubmit}
       >
         <fieldset disabled={isSubmitting}>
-          <FormLocationInput
-            name="location"
-            label="Today I'm going to be in "
-            isRequired
-          />
+          <div className={css.inlineFields}>
+            <GooglePlacesAutocomplete
+              className={css.inlineField}
+              name="location"
+              label="Today I'm going to be in "
+              placeholder="Enter a location"
+              isRequired
+              isDisabled={isSubmitting}
+            />
+            <span className={css.inlineText}>.</span>
+          </div>
 
           <div className={css.inlineFields}>
             <Select

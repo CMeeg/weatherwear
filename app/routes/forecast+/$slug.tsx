@@ -98,8 +98,8 @@ export default function Index() {
   }
 
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Your forecast for today</h1>
+    <>
+      <h2>Your forecast for today</h2>
 
       {/* TODO: Fix error - This Suspense boundary received an update before it finished hydrating. */}
       {/* https://github.com/remix-run/remix/issues/5165
@@ -139,6 +139,6 @@ export default function Index() {
           )}
         </Await>
       </Suspense>
-    </div>
+    </>
   )
 }

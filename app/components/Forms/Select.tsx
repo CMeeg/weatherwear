@@ -12,6 +12,7 @@ import {
   Text,
   ValidationResult
 } from "react-aria-components"
+import classnames from "classnames"
 import css from "./Select.module.css"
 
 interface SelectProps<T extends object>
@@ -31,12 +32,23 @@ function Select<T extends object>({
   items,
   ...props
 }: SelectProps<T>) {
+  // TODO: Add a function to handle the className prop being a function
+  const fieldClass = {
+    [css.field ?? ""]: true
+  }
+
+  if (typeof props.className === "string") {
+    fieldClass[props.className] = true
+  }
+
   return (
-    <AriaSelect className="" {...props}>
+    <AriaSelect {...props} className={classnames(fieldClass)}>
       <Label className="">{label}</Label>
-      <Button className={css.button}>
-        <SelectValue />
-      </Button>
+      <div className={css.container}>
+        <Button className={css.button}>
+          <SelectValue />
+        </Button>
+      </div>
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage}</FieldError>
       <Popover className={css.popover}>
