@@ -15,9 +15,9 @@ import { getCdnUrl } from "~/lib/url"
 import { getClientEnv } from "~/lib/env.server"
 import { useNonce } from "~/components/NonceContext"
 import { AppInsightsClient } from "~/components/AppInsights/Client"
+import { Header } from "~/components/Layout/Header"
 import { ClientEnvScript } from "~/components/ClientEnvScript"
 import { useLocale, I18nProvider, RouterProvider } from "react-aria-components"
-import "open-props/normalize.min.css"
 import "~/styles/base.css"
 
 export const links: LinksFunction = () => {
@@ -60,7 +60,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </head>
         <body>
           <RouterProvider navigate={navigate}>
-            <AppInsightsClient>{children}</AppInsightsClient>
+            <AppInsightsClient>
+              <Header />
+              <main>{children}</main>
+            </AppInsightsClient>
           </RouterProvider>
           <ClientEnvScript nonce={nonce} env={data.env} />
           <ScrollRestoration nonce={nonce} />

@@ -1,0 +1,12 @@
+.inlineFields {
+  margin-block-start: var(--size-3);
+
+  .inlineField,
+  .inlineText {
+    display: inline-block;
+  }
+}
+
+.formActions {
+  margin-block-start: var(--size-6);
+}

@@ -13,6 +13,7 @@ import {
 import type { ComboBoxProps, ValidationResult } from "react-aria-components"
 import { useDebounceFetcher } from "remix-utils/use-debounce-fetcher"
 import type { LocationsApiResponse } from "~/lib/places"
+import css from "./FormLocationInput.module.css"
 
 interface FormLocationInputProps<T extends object>
   extends Omit<
@@ -59,7 +60,7 @@ function FormLocationInput<T extends object>({
       </Group>
       {description && <Text slot="description">{description}</Text>}
       <FieldError>{errorMessage ?? locationsFetcher.data?.error}</FieldError>
-      <Popover>
+      <Popover className={css.items}>
         {/* TODO: Need to add [Google logo](https://developers.google.com/maps/documentation/places/web-service/policies#logo) when showing response */}
         <ListBox items={locationsFetcher.data?.items}>
           {(item) => (

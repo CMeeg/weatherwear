@@ -6,7 +6,7 @@ import {
 } from "@remix-run/react"
 import { redirect, json } from "@remix-run/node"
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node"
-import { Form, Button } from "react-aria-components"
+import { Form } from "react-aria-components"
 import { getCdnUrl } from "~/lib/url"
 import {
   wearForecastRequestValidator,
@@ -14,8 +14,10 @@ import {
 } from "~/lib/forecast/request.server"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWeatherApi } from "~/lib/weather/api.server"
-import { FormSelect, FormSelectItem } from "~/components/FormSelect"
 import { FormLocationInput } from "~/components/FormLocationInput"
+import { Select, SelectItem } from "~/components/Forms/Select"
+import { Button } from "~/components/Forms/Button"
+import css from "./index.module.css"
 
 export async function action({ request }: ActionFunctionArgs) {
   // Validate form data
@@ -117,13 +119,12 @@ export default function Index() {
   const { requestForm } = useLoaderData<typeof loader>()
 
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>WeatherWear</h1>
+    <>
       <p>
         Not sure what to wear today based on the weather? Tell me where
         you&rsquo;ll be today and a little bit about your fashion preferences
-        and I&rsquo;ll give you some advice on what to wear today based on the
-        local weather.
+        and I&rsquo;ll give you some advice on what to wear based on the local
+        weather.
       </p>
 
       {/* TODO: Use CSRF token and/or some type of captcha to protect form */}
@@ -139,46 +140,59 @@ export default function Index() {
             isRequired
           />
 
-          <FormSelect
-            name="subject"
-            label="I'm a "
-            isRequired
-            items={requestForm.subject.items}
-          >
-            {(item) => (
-              <FormSelectItem id={item.id}>
-                {item.name.toLowerCase()}
-              </FormSelectItem>
-            )}
-          </FormSelect>
-          <span>who likes to wear clothes </span>
-          <FormSelect
-            name="fit"
-            label="made to fit "
-            isRequired
-            items={requestForm.fit.items}
-          >
-            {(item) => (
-              <FormSelectItem id={item.id}>{item.name}</FormSelectItem>
-            )}
-          </FormSelect>
+          <div className={css.inlineFields}>
+            <Select
+              className={css.inlineField}
+              name="subject"
+              label="I'm a "
+              isRequired
+              isDisabled={isSubmitting}
+              items={requestForm.subject.items}
+              defaultSelectedKey={requestForm.subject.items[0]?.id}
+            >
+              {(item) => (
+                <SelectItem id={item.id}>{item.name.toLowerCase()}</SelectItem>
+              )}
+            </Select>
+            <span className={css.inlineText}>
+              {" "}
+              who likes to wear clothes&nbsp;
+            </span>
+            <Select
+              className={css.inlineField}
+              name="fit"
+              label="made to fit "
+              isRequired
+              isDisabled={isSubmitting}
+              items={requestForm.fit.items}
+            >
+              {(item) => (
+                <SelectItem id={item.id}>{item.name.toLowerCase()}</SelectItem>
+              )}
+            </Select>
+            <span className={css.inlineText}>.&nbsp;</span>
+            <Select
+              className={css.inlineField}
+              name="style"
+              label="I'd say my style is "
+              isRequired
+              isDisabled={isSubmitting}
+              items={requestForm.style.items}
+            >
+              {(item) => (
+                <SelectItem id={item.id}>{item.name.toLowerCase()}</SelectItem>
+              )}
+            </Select>
+            <span className={css.inlineText}>.</span>
+          </div>
 
-          <FormSelect
-            name="style"
-            label="I'd say my style is "
-            isRequired
-            items={requestForm.style.items}
-          >
-            {(item) => (
-              <FormSelectItem id={item.id}>{item.name}</FormSelectItem>
-            )}
-          </FormSelect>
-
-          <Button type="submit">
-            {isSubmitting ? "Fetching your forecast" : "Give me advice!"}
-          </Button>
+          <div className={css.formActions}>
+            <Button type="submit" isDisabled={isSubmitting}>
+              {isSubmitting ? "Fetching your forecast" : "Give me some advice!"}
+            </Button>
+          </div>
         </fieldset>
       </Form>
-    </div>
+    </>
   )
 }

@@ -1,0 +1,39 @@
+.button {
+  margin: 0;
+  padding: var(--size-2) var(--size-4);
+  color: var(--gray-1);
+  font-size: var(--font-size-3);
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  background-color: var(--accent-1);
+  border: var(--accent-2);
+  border-radius: var(--radius-2);
+  appearance: none;
+
+  &:hover,
+  &:focus {
+    box-shadow: var(--shadow-2);
+  }
+
+  &[data-pressed] {
+    background: var(--accent-2);
+    border-color: var(--accent-1);
+    box-shadow: var(--inner-shadow-2)
+  }
+
+  &[data-focus-visible] {
+    outline-offset: 2px;
+  }
+
+  &[data-disabled] {
+    color: var(--text-disabled);
+    background-color: var(--surface-2);
+    border-color: var(--surface-3);
+    box-shadow: none;
+  }
+
+  @media (--motionOK) {
+    transition: all 200ms ease-in-out;
+  }
+}

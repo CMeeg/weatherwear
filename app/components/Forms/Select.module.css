@@ -1,0 +1,85 @@
+.button {
+  padding: var(--size-1) var(--size-2);
+  background-color: var(--surface-2);
+  border: 0 solid var(--blue-3);
+  border-block-end-width: var(--border-size-3);
+
+  &:hover,
+  &:focus {
+    background-color: var(--surface-3);
+    border-color: var(--blue-4);
+    outline: none;
+  }
+
+  &[data-disabled] {
+    color: var(--text-disabled);
+    border-color: var(--surface-3);
+  }
+}
+
+.popover {
+  --origin: translateY(-8px);
+
+  min-width: var(--trigger-width);
+  background-color: var(--surface-2);
+  border-radius: var(--radius-2);
+  box-shadow: var(--shadow-1);
+
+  @media (--motionOK) {
+    &[data-entering] {
+      animation: popover-slide 200ms;
+    }
+
+    &[data-exiting] {
+      animation: popover-slide 200ms reverse ease-in;
+    }
+  }
+}
+
+.listBox {
+  display: block;
+  width: unset;
+  min-height: unset;
+  max-height: inherit;
+  border: none;
+  outline: none;
+}
+
+.listItem {
+  position: relative;
+  padding: var(--size-1) var(--size-6);
+
+
+  &[data-selected]::before {
+    position: absolute;
+    top: 4px;
+    left: var(--size-2);
+    content: '✓';
+    content: '✓' / '';
+    alt: ' ';
+  }
+
+  &[data-focused],
+  &[data-pressed] {
+    color: var(--accent-1);
+    background: var(--surface-3);
+    outline-color: var(--accent-2);
+    outline-offset: 2px;
+  }
+
+  @media (--motionOK) {
+    transition: outline-offset 200ms ease-in-out;
+  }
+}
+
+@keyframes popover-slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

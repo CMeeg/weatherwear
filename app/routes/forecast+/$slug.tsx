@@ -118,7 +118,8 @@ export default function Index() {
       >
         <Await resolve={completion} errorElement={<ForecastError />}>
           {(forecast) => (
-            <p>
+            <>
+              <p>{forecast.text}</p>
               {/* TODO: Is there an image component I can use here */}
               {forecast.image_url && (
                 // <img
@@ -134,9 +135,7 @@ export default function Index() {
                   // priority={true}
                 />
               )}
-              <br />
-              {forecast.text}
-            </p>
+            </>
           )}
         </Await>
       </Suspense>

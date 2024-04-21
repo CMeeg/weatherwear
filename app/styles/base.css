@@ -1,18 +1,169 @@
-/* TODO: Remove these styles - they are just to test postcss and openprops are working */
-html {
-  --text-1: var(--gray-9);
-  --text-2: var(--gray-7);
+/* Reset
+   Adapted from
+   - Open Props (https://open-props.style/)
+   - Josh Comeau (https://www.joshwcomeau.com/css/custom-css-reset/)
+*/
 
-  @media (--OSdark) {
-    --text-1: var(--gray-1);
-    --text-2: var(--gray-2);
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :where(html) {
+    scroll-behavior: smooth;
   }
 }
 
-h1 {
-  color: var(--purple-10);
+:where(body) {
+  min-block-size: 100%;
+  -webkit-font-smoothing: antialiased;
+}
 
-  @media (--OSdark) {
-    color: var(--purple-4);
+:where(img, picture, svg, video, canvas, audio, iframe, embed, object) {
+  display: block;
+}
+
+:where(img, picture, svg, video) {
+  block-size: auto;
+  max-inline-size: 100%;
+}
+
+:where(input, button, textarea, select),
+:where(input[type="file"])::-webkit-file-upload-button {
+  color: inherit;
+  font: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+}
+
+:where(p, h1, h2, h3, h4, h5, h6) {
+  overflow-wrap: break-word;
+}
+
+:where(a, u, ins, abbr) {
+  text-underline-offset: 1px;
+}
+
+@supports (-moz-appearance: none) {
+  :where(a, u, ins, abbr) {
+    text-underline-offset: 2px;
   }
+}
+
+:where(a[href], area, button, input:not([type="text"], [type="email"], [type="number"], [type="password"], [type=""], [type="tel"], [type="url"]), label[for], select, summary, [tabindex]:not([tabindex*="-"])) {
+  cursor: pointer;
+}
+
+:where(a[href], area, button, input, label[for], select, summary, textarea, [tabindex]:not([tabindex*="-"])) {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Base theme */
+
+html {
+  --link: var(--indigo-7);
+  --link-visited: var(--purple-7);
+  --text-1: var(--gray-12);
+  --text-2: var(--gray-7);
+  --text-disabled: var(--gray-5);
+  --accent-1: var(--blue-6);
+  --accent-2: var(--blue-9);
+  --surface-1: var(--gray-0);
+  --surface-2: var(--gray-2);
+  --surface-3: var(--gray-3);
+  --surface-4: var(--gray-4);
+  --scrollthumb-color: var(--gray-7);
+
+  color-scheme: light;
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  line-height: var(--font-lineheight-3);
+  background-color: var(--surface-1);
+  text-size-adjust: none;
+  block-size: 100%;
+  scrollbar-color: var(--scrollthumb-color) transparent;
+}
+
+:focus-visible {
+  outline-color: var(--accent-2);
+}
+
+:where(h1, h2, h3, h4, h5, h6) {
+  font-weight: var(--font-weight-9);
+  line-height: var(--font-lineheight-1);
+  text-wrap: balance;
+}
+
+:where(h1) {
+  font-size: var(--font-size-8);
+}
+
+:where(h2) {
+  font-size: var(--font-size-6);
+}
+
+:where(h3) {
+  font-size: var(--font-size-5);
+}
+
+:where(h4) {
+  font-size: var(--font-size-4);
+}
+
+:where(h5) {
+  font-size: var(--font-size-3);
+}
+
+:where(p, ul, ol, dl, h6) {
+  font-size: var(--font-size-2);
+}
+
+:where(p) {
+  text-wrap: pretty;
+}
+
+:where(ol, ul) {
+  padding-inline-start: var(--size-8);
+}
+
+:where(li) {
+  padding-inline-start: var(--size-2);
+}
+
+:where(svg:not([width])) {
+  inline-size: var(--size-10);
+}
+
+:where(a[href]) {
+  color: var(--link);
+}
+
+:where(a[href]):where(:visited) {
+  color: var(--link-visited);
+}
+
+:where(a):where([href]) {
+  text-decoration-color: var(--indigo-2);
+}
+
+:where(a):where([href]):where(:visited) {
+  text-decoration-color: var(--purple-2);
+}
+
+:where(a):where(:not(:hover)) {
+  text-decoration: inherit;
+}
+
+:where(textarea) {
+  resize: block;
+}
+
+::placeholder {
+  color: var(--gray-7);
+  opacity: 0.75;
 }
