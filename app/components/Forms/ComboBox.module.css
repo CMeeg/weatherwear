@@ -17,10 +17,18 @@
   border-color: var(--surface-3);
 }
 
+.field[data-invalid] .container {
+  border-color: var(--warning-1);
+}
+
 .input {
   padding: var(--size-1) var(--size-2);
   background-color: transparent;
   border: none;
+
+  &::placeholder {
+    color: var(--text-2);
+  }
 
   &:focus {
     outline: none;

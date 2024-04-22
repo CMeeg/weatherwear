@@ -17,6 +17,10 @@
   border-color: var(--surface-3);
 }
 
+.field[data-invalid] .container {
+  border-color: var(--warning-1);
+}
+
 .button {
   padding: var(--size-1) var(--size-2);
   background-color: transparent;
@@ -24,6 +28,10 @@
 
   &:focus {
     outline: none;
+  }
+
+  [data-placeholder] {
+    color: var(--text-2);
   }
 }
 

@@ -1,0 +1,16 @@
+.container {
+  margin-block-start: var(--size-3);
+}
+
+.errors {
+  margin-block-start: var(--size-1);
+
+  li {
+    padding: var(--size-1) 0;
+  }
+}
+
+.error {
+  padding: var(--size-1) var(--size-2);
+  background-color: var(--warning-1);
+}

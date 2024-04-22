@@ -14,6 +14,8 @@ import {
 } from "~/lib/forecast/request.server"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWeatherApi } from "~/lib/weather/api.server"
+import { Fieldset } from "~/components/Forms/Fieldset"
+import { ValidationSummary } from "~/components/Forms/ValidationSummary"
 import { GooglePlacesAutocomplete } from "~/components/Forms/GooglePlacesAutocomplete"
 import { Select, SelectItem } from "~/components/Forms/Select"
 import { Button } from "~/components/Forms/Button"
@@ -120,7 +122,7 @@ export default function Index() {
 
   return (
     <>
-      <p>
+      <p className={css.intro}>
         Not sure what to wear today based on the weather? Tell me where
         you&rsquo;ll be today and a little bit about your fashion preferences
         and I&rsquo;ll give you some advice on what to wear based on the local
@@ -133,14 +135,18 @@ export default function Index() {
         validationErrors={actionData?.errors}
         onSubmit={onSubmit}
       >
-        <fieldset disabled={isSubmitting}>
+        <Fieldset legend="Get your forecast" disabled={isSubmitting}>
+          <ValidationSummary
+            heading="There was a problem getting your forecast:"
+            errors={actionData?.errors}
+          />
+
           <div className={css.inlineFields}>
             <GooglePlacesAutocomplete
               className={css.inlineField}
               name="location"
-              label="Today I'm going to be in "
+              label="Today I'll be in "
               placeholder="Enter a location"
-              isRequired
               isDisabled={isSubmitting}
             />
             <span className={css.inlineText}>.</span>
@@ -151,8 +157,8 @@ export default function Index() {
               className={css.inlineField}
               name="subject"
               label="I'm a "
-              isRequired
               isDisabled={isSubmitting}
+              errorMessage={undefined}
               items={requestForm.subject.items}
               defaultSelectedKey={requestForm.subject.items[0]?.id}
             >
@@ -160,15 +166,11 @@ export default function Index() {
                 <SelectItem id={item.id}>{item.name.toLowerCase()}</SelectItem>
               )}
             </Select>
-            <span className={css.inlineText}>
-              {" "}
-              who likes to wear clothes&nbsp;
-            </span>
+            <span className={css.inlineText}>&nbsp;</span>
             <Select
               className={css.inlineField}
               name="fit"
-              label="made to fit "
-              isRequired
+              label="who likes to wear clothes made to fit "
               isDisabled={isSubmitting}
               items={requestForm.fit.items}
             >
@@ -181,7 +183,6 @@ export default function Index() {
               className={css.inlineField}
               name="style"
               label="I'd say my style is "
-              isRequired
               isDisabled={isSubmitting}
               items={requestForm.style.items}
             >
@@ -197,7 +198,7 @@ export default function Index() {
               {isSubmitting ? "Fetching your forecast" : "Give me some advice!"}
             </Button>
           </div>
-        </fieldset>
+        </Fieldset>
       </Form>
     </>
   )

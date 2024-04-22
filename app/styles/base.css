@@ -73,11 +73,13 @@ html {
   --text-disabled: var(--gray-5);
   --accent-1: var(--blue-6);
   --accent-2: var(--blue-9);
+  --warning-1: var(--yellow-5);
   --surface-1: var(--gray-0);
   --surface-2: var(--gray-2);
   --surface-3: var(--gray-3);
   --surface-4: var(--gray-4);
   --scrollthumb-color: var(--gray-7);
+  --size-content-4: 80ch;
 
   color-scheme: light;
   color: var(--text-1);
@@ -93,33 +95,40 @@ html {
   outline-color: var(--accent-2);
 }
 
-:where(h1, h2, h3, h4, h5, h6) {
+:where(h1, h2, h3, h4, h5, h6),
+.h1, .h2, .h3, .h4, .h5, .h6{
   font-weight: var(--font-weight-9);
   line-height: var(--font-lineheight-1);
   text-wrap: balance;
 }
 
-:where(h1) {
+:where(h1),
+.h1 {
   font-size: var(--font-size-8);
 }
 
-:where(h2) {
+:where(h2),
+.h2 {
   font-size: var(--font-size-6);
 }
 
-:where(h3) {
+:where(h3),
+.h3 {
   font-size: var(--font-size-5);
 }
 
-:where(h4) {
+:where(h4),
+.h4 {
   font-size: var(--font-size-4);
 }
 
-:where(h5) {
+:where(h5),
+.h5 {
   font-size: var(--font-size-3);
 }
 
-:where(p, ul, ol, dl, h6) {
+:where(h6),
+.h6 {
   font-size: var(--font-size-2);
 }
 
@@ -166,4 +175,15 @@ html {
 ::placeholder {
   color: var(--gray-7);
   opacity: 0.75;
+}
+
+/* Utility classes */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
 }

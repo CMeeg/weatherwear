@@ -50,7 +50,7 @@ function Select<T extends object>({
         </Button>
       </div>
       {description && <Text slot="description">{description}</Text>}
-      <FieldError>{errorMessage}</FieldError>
+      <FieldError className="visually-hidden">{errorMessage}</FieldError>
       <Popover className={css.popover}>
         <ListBox className={css.listBox} items={items}>
           {children}

@@ -59,7 +59,7 @@ function ComboBox<T extends object>({
         <Button className={css.button}>▼</Button>
       </div>
       {description && <Text slot="description">{description}</Text>}
-      <FieldError>{errorMessage}</FieldError>
+      <FieldError className="visually-hidden">{errorMessage}</FieldError>
       <Popover className={css.popover}>
         <ListBox className={css.listBox}>{children}</ListBox>
       </Popover>

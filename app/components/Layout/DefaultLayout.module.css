@@ -1,0 +1,4 @@
+.main {
+  padding: var(--size-8);
+  padding-block-end: 0;
+}

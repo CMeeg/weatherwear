@@ -1,3 +1,8 @@
+.intro {
+  max-width: var(--size-content-4);
+  font-size: var(--font-size-2);
+}
+
 .inlineFields {
   margin-block-start: var(--size-3);
 
@@ -8,5 +13,5 @@
 }
 
 .formActions {
-  margin-block-start: var(--size-6);
+  margin-block-start: var(--size-5);
 }

@@ -15,7 +15,7 @@ import { getCdnUrl } from "~/lib/url"
 import { getClientEnv } from "~/lib/env.server"
 import { useNonce } from "~/components/NonceContext"
 import { AppInsightsClient } from "~/components/AppInsights/Client"
-import { Header } from "~/components/Layout/Header"
+import { DefaultLayout } from "~/components/Layout/DefaultLayout"
 import { ClientEnvScript } from "~/components/ClientEnvScript"
 import { useLocale, I18nProvider, RouterProvider } from "react-aria-components"
 import "~/styles/base.css"
@@ -61,8 +61,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <body>
           <RouterProvider navigate={navigate}>
             <AppInsightsClient>
-              <Header />
-              <main>{children}</main>
+              <DefaultLayout>{children}</DefaultLayout>
             </AppInsightsClient>
           </RouterProvider>
           <ClientEnvScript nonce={nonce} env={data.env} />
@@ -99,14 +98,14 @@ export function ErrorBoundary() {
       </head>
       <body>
         <AppInsightsClient>
-          <h1>
+          <h2>
             Error boundary says:{" "}
             {isRouteErrorResponse(error)
               ? `${error.status} ${error.statusText}`
               : error instanceof Error
                 ? error.message
                 : "Unknown Error"}
-          </h1>
+          </h2>
         </AppInsightsClient>
         <Scripts nonce={nonce} />
       </body>
