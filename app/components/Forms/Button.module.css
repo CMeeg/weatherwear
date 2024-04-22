@@ -11,22 +11,31 @@
   border-radius: var(--radius-2);
   appearance: none;
 
+  &:is(a) {
+    display: inline-block;
+    text-decoration: none;
+  }
+
   &:hover,
   &:focus {
     box-shadow: var(--shadow-2);
   }
 
-  &[data-pressed] {
+  &[data-pressed],
+  &:active {
     background: var(--accent-2);
     border-color: var(--accent-1);
     box-shadow: var(--inner-shadow-2)
   }
 
-  &[data-focus-visible] {
+  &[data-focus-visible],
+  &:focus-visible {
     outline-offset: 2px;
   }
 
-  &[data-disabled] {
+  &[data-disabled],
+  &:disabled,
+  &[disabled] {
     color: var(--text-disabled);
     background-color: var(--surface-2);
     border-color: var(--surface-3);

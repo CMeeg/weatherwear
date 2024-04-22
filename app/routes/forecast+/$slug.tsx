@@ -6,7 +6,7 @@ import { useEventSource } from "remix-utils/sse/react"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWearForecastCompletionApi } from "~/lib/forecast/completion.server"
 import type { ForecastCompletionEventStatus } from "~/lib/forecast/completion.server"
-import { Image } from "@unpic/react"
+import { Forecast } from "~/components/Forecast/Forecast"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   // Validate params
@@ -99,7 +99,7 @@ export default function Index() {
 
   return (
     <>
-      <h2>Your forecast for today</h2>
+      <h2>Your forecast</h2>
 
       {/* TODO: Fix error - This Suspense boundary received an update before it finished hydrating. */}
       {/* https://github.com/remix-run/remix/issues/5165
@@ -118,24 +118,7 @@ export default function Index() {
       >
         <Await resolve={completion} errorElement={<ForecastError />}>
           {(forecast) => (
-            <>
-              <p>{forecast.text}</p>
-              {/* TODO: Is there an image component I can use here */}
-              {forecast.image_url && (
-                // <img
-                //   src={`${resolved.image_url}?tr=w-640&h-640&fm-auto`}
-                //   alt=""
-                //   style={{ height: "80vh" }}
-                // />
-                <Image
-                  src={forecast.image_url}
-                  width={1024}
-                  height={1024}
-                  alt=""
-                  // priority={true}
-                />
-              )}
-            </>
+            <Forecast text={forecast.text} imageUrl={forecast.image_url} />
           )}
         </Await>
       </Suspense>

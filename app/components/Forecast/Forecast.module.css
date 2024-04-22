@@ -1,0 +1,27 @@
+.forecast {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  margin-block-start: var(--size-3);
+  background: var(--grape-0);
+}
+
+.text {
+  display: grid;
+  gap: var(--size-5);
+  max-width: var(--size-content-4);
+
+  p {
+    margin-block-start: var(--size-3);
+    font-size: var(--font-size-2);
+  }
+}
+
+.image {
+  align-self: stretch;
+
+  img {
+    border-radius: var(--radius-2);
+    box-shadow: var(--shadow-2);
+  }
+}
