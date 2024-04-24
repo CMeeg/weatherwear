@@ -147,9 +147,9 @@ export default function Index() {
               name="location"
               label="Today I'll be in "
               placeholder="Enter a location"
+              description="."
               isDisabled={isSubmitting}
             />
-            <span className={css.inlineText}>.</span>
           </div>
 
           <div className={css.inlineFields}>
@@ -160,17 +160,18 @@ export default function Index() {
               isDisabled={isSubmitting}
               errorMessage={undefined}
               items={requestForm.subject.items}
+              description="&nbsp;who likes to wear clothes&nbsp;"
               defaultSelectedKey={requestForm.subject.items[0]?.id}
             >
               {(item) => (
                 <SelectItem id={item.id}>{item.name.toLowerCase()}</SelectItem>
               )}
             </Select>
-            <span className={css.inlineText}>&nbsp;</span>
             <Select
               className={css.inlineField}
               name="fit"
-              label="who likes to wear clothes made to fit "
+              label="made to fit "
+              description=".&nbsp;"
               isDisabled={isSubmitting}
               items={requestForm.fit.items}
             >
@@ -178,11 +179,11 @@ export default function Index() {
                 <SelectItem id={item.id}>{item.name.toLowerCase()}</SelectItem>
               )}
             </Select>
-            <span className={css.inlineText}>.&nbsp;</span>
             <Select
               className={css.inlineField}
               name="style"
               label="I'd say my style is "
+              description="."
               isDisabled={isSubmitting}
               items={requestForm.style.items}
             >
@@ -190,7 +191,6 @@ export default function Index() {
                 <SelectItem id={item.id}>{item.name.toLowerCase()}</SelectItem>
               )}
             </Select>
-            <span className={css.inlineText}>.</span>
           </div>
 
           <div className={css.formActions}>

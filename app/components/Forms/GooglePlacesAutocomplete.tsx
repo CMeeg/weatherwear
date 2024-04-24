@@ -5,7 +5,13 @@ import type { LocationsApiResponse } from "~/lib/places"
 
 type GooglePlacesAutocompleteProps<T extends object> = Pick<
   ComboBoxProps<T>,
-  "className" | "name" | "label" | "placeholder" | "isRequired" | "isDisabled"
+  | "className"
+  | "name"
+  | "label"
+  | "placeholder"
+  | "description"
+  | "isRequired"
+  | "isDisabled"
 >
 
 function GooglePlacesAutocomplete<T extends object>({
@@ -13,6 +19,7 @@ function GooglePlacesAutocomplete<T extends object>({
   name,
   label,
   placeholder,
+  description,
   isRequired,
   isDisabled
 }: GooglePlacesAutocompleteProps<T>) {
@@ -24,6 +31,7 @@ function GooglePlacesAutocomplete<T extends object>({
       name={name}
       label={label}
       placeholder={placeholder}
+      description={description}
       formValue="text"
       isRequired={isRequired}
       isDisabled={isDisabled}

@@ -1,14 +1,14 @@
 .intro {
   max-width: var(--size-content-4);
-  font-size: var(--font-size-2);
+  font-size: var(--font-size-3);
 }
 
 .inlineFields {
   margin-block-start: var(--size-3);
 
-  .inlineField,
-  .inlineText {
+  .inlineField {
     display: inline-block;
+    margin-block-start: var(--size-1);
   }
 }
 

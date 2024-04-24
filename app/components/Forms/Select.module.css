@@ -22,7 +22,7 @@
 }
 
 .button {
-  padding: var(--size-1) var(--size-2);
+  padding: var(--size-2) var(--size-3) var(--size-1);
   background-color: transparent;
   border: none;
 
@@ -60,30 +60,32 @@
   width: unset;
   min-height: unset;
   max-height: inherit;
+  overflow: auto;
   border: none;
   outline: none;
 }
 
 .listItem {
   position: relative;
-  padding: var(--size-1) var(--size-6);
+  padding: var(--size-3) var(--size-6);
 
 
   &[data-selected]::before {
     position: absolute;
-    top: 4px;
+    top: var(--size-3);
     left: var(--size-2);
     content: '✓';
     content: '✓' / '';
     alt: ' ';
   }
 
+  &[data-selected],
   &[data-focused],
   &[data-pressed] {
     color: var(--accent-1);
     background: var(--surface-3);
     outline: 1px auto var(--accent-2);
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
 
   @media (--motionOK) {
