@@ -1,14 +1,18 @@
 .forecast {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  gap: var(--size-6);
   align-items: start;
   margin-block-start: var(--size-3);
   background: var(--grape-0);
+
+  @media (--md-n-above) {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .text {
   display: grid;
-  gap: var(--size-5);
+  gap: var(--size-4);
   max-width: var(--size-content-4);
 
   p {

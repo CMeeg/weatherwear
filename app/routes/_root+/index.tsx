@@ -122,12 +122,14 @@ export default function Index() {
 
   return (
     <>
-      <p className={css.intro}>
-        Not sure what to wear today based on the weather? Tell me where
-        you&rsquo;ll be today and a little bit about your fashion preferences
-        and I&rsquo;ll give you some advice on what to wear based on the local
-        weather.
-      </p>
+      <div className={css.intro}>
+        <p>Not sure what to wear today based on the weather?</p>
+        <p>
+          Tell me where you&rsquo;ll be today and a little bit about your
+          fashion preferences and I&rsquo;ll give you some advice on what to
+          wear.
+        </p>
+      </div>
 
       {/* TODO: Use CSRF token and/or some type of captcha to protect form */}
       <Form

@@ -1,6 +1,10 @@
 .intro {
   max-width: var(--size-content-4);
   font-size: var(--font-size-3);
+
+  p {
+    margin-block-start: var(--size-3);
+  }
 }
 
 .inlineFields {

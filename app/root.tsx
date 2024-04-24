@@ -21,7 +21,18 @@ import { useLocale, I18nProvider, RouterProvider } from "react-aria-components"
 import "~/styles/base.css"
 
 export const links: LinksFunction = () => {
-  const links: ReturnType<LinksFunction> = []
+  const links: ReturnType<LinksFunction> = [
+    { rel: "preconnect", href: "https://fonts.googleapis.com" },
+    {
+      rel: "preconnect",
+      href: "https://fonts.gstatic.com",
+      crossOrigin: "anonymous"
+    },
+    {
+      href: "https://fonts.googleapis.com/css2?family=Sen:wght@400..800&display=swap",
+      rel: "stylesheet"
+    }
+  ]
 
   const cdnUrl = getCdnUrl("", false)
 

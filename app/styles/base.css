@@ -66,6 +66,7 @@
 /* Base theme */
 
 html {
+  --font-ww: "Sen", system-ui, -apple-system, sans-serif;
   --link: var(--indigo-7);
   --link-visited: var(--purple-7);
   --text-1: var(--gray-12);
@@ -83,7 +84,10 @@ html {
 
   color-scheme: light;
   color: var(--text-1);
-  font-family: var(--font-sans);
+  font-weight: var(--font-weight-4);
+  font-family: var(--font-ww);
+  font-optical-sizing: auto;
+  font-style: normal;
   line-height: var(--font-lineheight-3);
   background-color: var(--surface-1);
   text-size-adjust: none;
