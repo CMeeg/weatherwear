@@ -28,6 +28,7 @@
 
   &::placeholder {
     color: var(--text-2);
+    opacity: 1;
   }
 
   &:focus {
