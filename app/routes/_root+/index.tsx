@@ -14,7 +14,7 @@ import {
 } from "~/lib/forecast/request.server"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWeatherApi } from "~/lib/weather/api.server"
-import { Fieldset } from "~/components/Forms/Fieldset"
+import { Fieldset, Legend } from "~/components/Forms/Fieldset"
 import { ValidationSummary } from "~/components/Forms/ValidationSummary"
 import { GooglePlacesAutocomplete } from "~/components/Forms/GooglePlacesAutocomplete"
 import { Select, SelectItem } from "~/components/Forms/Select"
@@ -125,9 +125,8 @@ export default function Index() {
       <div className={css.intro}>
         <p>Not sure what to wear today based on the weather?</p>
         <p>
-          Tell me where you&rsquo;ll be today and a little bit about your
-          fashion preferences and I&rsquo;ll give you some advice on what to
-          wear.
+          Tell me where you&rsquo;ll be and a little bit about your fashion
+          preferences and I&rsquo;ll give you some advice on what to wear.
         </p>
       </div>
 
@@ -137,7 +136,9 @@ export default function Index() {
         validationErrors={actionData?.errors}
         onSubmit={onSubmit}
       >
-        <Fieldset legend="Get your forecast" disabled={isSubmitting}>
+        <Fieldset disabled={isSubmitting}>
+          <Legend className="h2">Get your forecast</Legend>
+
           <ValidationSummary
             heading="There was a problem getting your forecast:"
             errors={actionData?.errors}
@@ -161,6 +162,7 @@ export default function Index() {
               label="I'm a "
               isDisabled={isSubmitting}
               errorMessage={undefined}
+              isSecret={true}
               items={requestForm.subject.items}
               description="&nbsp;who likes to wear clothes&nbsp;"
               defaultSelectedKey={requestForm.subject.items[0]?.id}

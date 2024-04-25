@@ -35,7 +35,7 @@
     "@sindresorhus/slugify": "^2.2.1",
     "@unpic/react": "^0.1.8",
     "applicationinsights": "2.9.5",
-    "classnames": "^2.5.1",
+    "clsx": "^2.1.1",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "country-code-lookup": "^0.1.1",

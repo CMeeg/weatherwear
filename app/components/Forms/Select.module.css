@@ -1,8 +1,23 @@
+.field{
+  @media (--motionOK) {
+    transition: all 200ms ease-in-out;
+  }
+}
+
 .container {
   display: inline-block;
   background-color: var(--surface-2);
   border: 0 solid var(--blue-3);
   border-block-end-width: var(--border-size-3);
+
+  @media (--motionOK) {
+    transition: all 200ms ease-in-out;
+  }
+}
+
+.secret .container {
+  background-color: var(--surface-1);
+  border-color: var(--surface-1);
 }
 
 .container:hover,
@@ -32,6 +47,34 @@
 
   [data-placeholder] {
     color: var(--text-2);
+  }
+
+  @media (--motionOK) {
+    transition: all 200ms ease-in-out;
+  }
+}
+
+.secret {
+  .container:hover {
+    background-color: var(--surface-1);
+    border-color: var(--surface-1);
+  }
+
+  [data-disabled] .container {
+    color: var(--text-1);
+    border-color: var(--surface-1);
+  }
+
+  [data-invalid] .container {
+    border-color: var(--surface-1);
+  }
+
+  .button {
+    padding: var(--size-2) 0 var(--size-1);
+
+    [data-placeholder] {
+      color: var(--text-1);
+    }
   }
 }
 

@@ -1,18 +1,22 @@
+import { useState } from "react"
 import {
   Button,
   FieldError,
   Label,
   ListBox,
   ListBoxItem,
-  ListBoxItemProps,
   Popover,
   Select as AriaSelect,
-  SelectProps as AriaSelectProps,
   SelectValue,
   Text,
   ValidationResult
 } from "react-aria-components"
-import classnames from "classnames"
+import type {
+  ListBoxItemProps,
+  SelectProps as AriaSelectProps,
+  SelectRenderProps
+} from "react-aria-components"
+import { clsx } from "clsx"
 import css from "./Select.module.css"
 
 interface SelectProps<T extends object>
@@ -20,29 +24,38 @@ interface SelectProps<T extends object>
   label?: string
   description?: string
   errorMessage?: string | ((validation: ValidationResult) => string)
+  isSecret?: boolean
   items?: Iterable<T>
   children: React.ReactNode | ((item: T) => React.ReactNode)
 }
 
 function Select<T extends object>({
+  className,
   label,
   description,
   errorMessage,
+  isSecret,
   children,
   items,
   ...props
 }: SelectProps<T>) {
-  // TODO: Add a function to handle the className prop being a function
-  const fieldClass = {
-    [css.field ?? ""]: true
-  }
+  const [discovered, setDiscovered] = useState(false)
 
-  if (typeof props.className === "string") {
-    fieldClass[props.className] = true
+  const getFieldClassName = (renderProps: SelectRenderProps) => {
+    const renderClassName =
+      typeof className === "function" ? className(renderProps) : className
+
+    return clsx(renderClassName, css.field, {
+      [css.secret ?? ""]: isSecret && !discovered
+    })
   }
 
   return (
-    <AriaSelect {...props} className={classnames(fieldClass)}>
+    <AriaSelect
+      {...props}
+      className={(values) => getFieldClassName(values)}
+      onFocus={() => setDiscovered(true)}
+    >
       <Label className="">{label}</Label>
       <div className={css.container}>
         <Button className={css.button}>

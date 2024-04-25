@@ -1,18 +1,21 @@
 import {
   Button,
   ComboBox as AriaComboBox,
-  ComboBoxProps as AriaComboBoxProps,
   FieldError,
   Input,
   Label,
   ListBox,
   ListBoxItem,
-  ListBoxItemProps,
   Popover,
   Text,
   ValidationResult
 } from "react-aria-components"
-import classnames from "classnames"
+import type {
+  ComboBoxProps as AriaComboBoxProps,
+  ComboBoxRenderProps,
+  ListBoxItemProps
+} from "react-aria-components"
+import { clsx } from "clsx"
 import css from "./ComboBox.module.css"
 
 interface ComboBoxProps<T extends object>
@@ -25,6 +28,7 @@ interface ComboBoxProps<T extends object>
 }
 
 function ComboBox<T extends object>({
+  className,
   label,
   description,
   placeholder,
@@ -32,17 +36,15 @@ function ComboBox<T extends object>({
   children,
   ...props
 }: ComboBoxProps<T>) {
-  // TODO: Add a function to handle the className prop being a function
-  const fieldClass = {
-    [css.field ?? ""]: true
-  }
+  const getFieldClassName = (renderProps: ComboBoxRenderProps) => {
+    const renderClassName =
+      typeof className === "function" ? className(renderProps) : className
 
-  if (typeof props.className === "string") {
-    fieldClass[props.className] = true
+    return clsx(renderClassName, css.field)
   }
 
   return (
-    <AriaComboBox {...props} className={classnames(fieldClass)}>
+    <AriaComboBox {...props} className={(values) => getFieldClassName(values)}>
       <Label className="">{label}</Label>
       <div className={css.container}>
         <Input

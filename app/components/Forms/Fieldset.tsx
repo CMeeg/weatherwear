@@ -1,22 +1,27 @@
-import classnames from "classnames"
+import { clsx } from "clsx"
 import css from "./Fieldset.module.css"
 
 interface FieldsetProps
-  extends React.FieldsetHTMLAttributes<HTMLFieldSetElement> {
-  legend?: string
-}
+  extends React.FieldsetHTMLAttributes<HTMLFieldSetElement> {}
 
-function Fieldset({ legend, className, children, ...props }: FieldsetProps) {
+function Fieldset({ className, children, ...props }: FieldsetProps) {
   return (
-    <fieldset {...props} className={classnames(css.fieldset, className)}>
-      {legend && (
-        <legend className={classnames(css.legend, "h2")}>{legend}</legend>
-      )}
+    <fieldset {...props} className={clsx(css.fieldset, className)}>
       {children}
     </fieldset>
   )
 }
 
-export { Fieldset }
+interface LegendProps extends React.HTMLAttributes<HTMLLegendElement> {}
+
+function Legend({ className, children, ...props }: LegendProps) {
+  return (
+    <legend {...props} className={clsx(css.legend, className)}>
+      {children}
+    </legend>
+  )
+}
+
+export { Fieldset, Legend }
 
 export type { FieldsetProps }

@@ -5,17 +5,8 @@
 
 .weatherwear {
   position: relative;
-  font-size: var(--font-size-6);
+  font-size: var(--font-size-7);
   text-wrap: nowrap;
-
-  img {
-    position: absolute;
-    top: -25px;
-    left: -30px;
-    z-index: var(--layer-1);
-    width: 80px;
-    height: 80px;
-  }
 
   a {
     position: relative;
@@ -23,17 +14,26 @@
     display: block;
     padding-inline-start: 12px;
   }
+}
 
-  a::before {
-    position: absolute;
-    top: -8px;
-    left: 5px;
-    z-index: -1;
-    width: 40px;
-    height: 80px;
-    background-color: var(--surface-1);
-    transform: rotate(45deg);
-    opacity: 0.9;
-    content: '';
-  }
+.weather {
+  position: absolute;
+  top: -22px;
+  left: -30px;
+  z-index: var(--layer-1);
+  width: 80px;
+  height: 80px;
+}
+
+.weather::after {
+  position: absolute;
+  top: 17px;
+  left: 35px;
+  z-index: var(--layer-2);
+  width: 40px;
+  height: 80px;
+  background-color: var(--surface-1);
+  transform: rotate(45deg);
+  opacity: 0.9;
+  content: '';
 }
