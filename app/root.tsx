@@ -11,6 +11,7 @@ import {
 } from "@remix-run/react"
 import type { LinksFunction } from "@remix-run/node"
 import { json } from "@remix-run/node"
+import { defaultLocale } from "./lib/i18n"
 import { getCdnUrl } from "~/lib/url"
 import { getClientEnv } from "~/lib/env.server"
 import { useNonce } from "~/components/NonceContext"
@@ -64,12 +65,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   const data = useLoaderData<typeof loader>()
 
-  const { locale, direction } = useLocale()
+  const { culture, direction } = defaultLocale
   const navigate = useNavigate()
 
   return (
-    <I18nProvider locale={locale}>
-      <html lang={locale} dir={direction}>
+    <I18nProvider locale={culture}>
+      <html lang={culture} dir={direction}>
         <head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />

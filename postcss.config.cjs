@@ -1,3 +1,4 @@
+const postcssImport = require("postcss-import")
 const postcssPresetEnv = require("postcss-preset-env")
 const postcssGlobalData = require("@csstools/postcss-global-data")
 const postcssCustomMedia = require("postcss-custom-media")
@@ -6,6 +7,9 @@ const path = require("path")
 
 const config = () => ({
   plugins: [
+    postcssImport({
+      path: ["app/styles"]
+    }),
     postcssPresetEnv({
       stage: 0
     }),

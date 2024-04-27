@@ -1,6 +1,5 @@
 .header {
-  padding: var(--size-6);
-  padding-block-end: 0;
+  padding: var(--size-3) var(--size-6) 0;
 }
 
 .weatherwear {
@@ -12,14 +11,13 @@
     position: relative;
     z-index: var(--layer-3);
     display: block;
-    padding-inline-start: 12px;
   }
 }
 
 .weather {
   position: absolute;
   top: -22px;
-  left: -30px;
+  left: -34px;
   z-index: var(--layer-1);
   width: 80px;
   height: 80px;
@@ -28,7 +26,7 @@
 .weather::after {
   position: absolute;
   top: 17px;
-  left: 35px;
+  left: 31px;
   z-index: var(--layer-2);
   width: 40px;
   height: 80px;

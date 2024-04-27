@@ -1,0 +1,101 @@
+/* Base theme */
+
+html {
+  color-scheme: light;
+  color: var(--text-1);
+  font-weight: var(--font-weight-4);
+  font-family: var(--font-ww);
+  font-optical-sizing: auto;
+  font-style: normal;
+  line-height: var(--font-lineheight-3);
+  background-color: var(--surface-1);
+  text-size-adjust: none;
+  block-size: 100%;
+  scrollbar-color: var(--scrollthumb-color) transparent;
+}
+
+:focus-visible {
+  outline-color: var(--accent-2);
+}
+
+:where(h1, h2, h3, h4, h5, h6),
+.h1, .h2, .h3, .h4, .h5, .h6{
+  font-weight: var(--font-weight-9);
+  line-height: var(--font-lineheight-1);
+  text-wrap: balance;
+}
+
+:where(h1),
+.h1 {
+  font-size: var(--font-size-8);
+}
+
+:where(h2),
+.h2 {
+  font-size: var(--font-size-6);
+}
+
+:where(h3),
+.h3 {
+  font-size: var(--font-size-5);
+}
+
+:where(h4),
+.h4 {
+  font-size: var(--font-size-4);
+}
+
+:where(h5),
+.h5 {
+  font-size: var(--font-size-3);
+}
+
+:where(h6),
+.h6 {
+  font-size: var(--font-size-2);
+}
+
+:where(p) {
+  text-wrap: pretty;
+}
+
+:where(ol, ul) {
+  padding-inline-start: var(--size-8);
+}
+
+:where(li) {
+  padding-inline-start: var(--size-2);
+}
+
+:where(svg:not([width])) {
+  inline-size: var(--size-10);
+}
+
+:where(a[href]) {
+  color: var(--link);
+}
+
+:where(a[href]):where(:visited) {
+  color: var(--link-visited);
+}
+
+:where(a):where([href]) {
+  text-decoration-color: var(--indigo-2);
+}
+
+:where(a):where([href]):where(:visited) {
+  text-decoration-color: var(--purple-2);
+}
+
+:where(a):where(:not(:hover)) {
+  text-decoration: inherit;
+}
+
+:where(textarea) {
+  resize: block;
+}
+
+::placeholder {
+  color: var(--gray-7);
+  opacity: 0.75;
+}

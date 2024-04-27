@@ -1,13 +1,13 @@
 .button {
   margin: 0;
   padding: var(--size-2) var(--size-4);
-  color: var(--gray-1);
+  color: var(--text-accent);
   font-size: var(--font-size-3);
   text-align: center;
   text-decoration: none;
   vertical-align: middle;
   background-color: var(--accent-1);
-  border: var(--accent-2);
+  border: var(--accent-3);
   border-radius: var(--radius-2);
   appearance: none;
 
@@ -21,16 +21,16 @@
     box-shadow: var(--shadow-2);
   }
 
+  &[data-focus-visible],
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+
   &[data-pressed],
   &:active {
     background: var(--accent-2);
     border-color: var(--accent-1);
-    box-shadow: var(--inner-shadow-2)
-  }
-
-  &[data-focus-visible],
-  &:focus-visible {
-    outline-offset: 2px;
+    box-shadow: var(--inner-shadow-2);
   }
 
   &[data-disabled],

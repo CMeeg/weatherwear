@@ -13,13 +13,13 @@ export default defineConfig({
   base,
   plugins: [
     remix({
-      // ignore all files in routes folder to prevent default remix convention from picking up routes
+      // Ignore all files in routes folder to prevent default remix convention from picking up routes
       ignoredRouteFiles: ["**/*"],
       routes: async (defineRoutes) => {
         return flatRoutes("routes", defineRoutes)
       }
     }),
-    // Don't include any locale strings in the client JS bundle.
+    // Don't include any locale strings in the client JS bundle
     { ...localesPlugin.vite({ locales: [] }), enforce: "pre" },
     tsconfigPaths()
   ]

@@ -79,7 +79,7 @@ function handleBrowserRequest(
 ) {
   const nonce = loadContext.cspNonce
 
-  const lang = defaultLocale.culture
+  const { culture } = defaultLocale
 
   return new Promise((resolve, reject) => {
     let shellRendered = false
@@ -92,7 +92,7 @@ function handleBrowserRequest(
         />
       </NonceContext.Provider>,
       {
-        bootstrapScriptContent: getLocalizationScript(lang),
+        bootstrapScriptContent: getLocalizationScript(culture),
         onShellReady() {
           shellRendered = true
           const body = new PassThrough()

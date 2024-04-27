@@ -1,24 +1,24 @@
 .container {
   display: inline-block;
   background-color: var(--surface-2);
-  border: 0 solid var(--blue-3);
+  border: 0 solid var(--accent-1);
   border-block-end-width: var(--border-size-3);
 }
 
 .container:hover,
 .field[data-focused] .container {
   background-color: var(--surface-3);
-  border-color: var(--blue-4);
+  border-color: var(--accent-2);
   outline: none;
 }
 
 .field[data-disabled] .container {
   color: var(--text-disabled);
-  border-color: var(--surface-3);
+  border-color: var(--accent-disabled);
 }
 
 .field[data-invalid] .container {
-  border-color: var(--warning-1);
+  border-color: var(--accent-warning);
 }
 
 .input {
@@ -42,7 +42,7 @@
 }
 
 .popover {
-  --origin: translateY(-8px);
+  --origin: translateY(calc(-1 * var(--size-2)));
 
   min-width: var(--trigger-width);
   background-color: var(--surface-2);
@@ -87,7 +87,7 @@
   &[data-selected],
   &[data-focused],
   &[data-pressed] {
-    color: var(--accent-1);
+    color: var(--text-selected);
     background: var(--surface-3);
     outline: 1px auto var(--accent-2);
     outline-offset: -2px;

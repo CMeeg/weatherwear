@@ -12,5 +12,5 @@
 
 .error {
   padding: var(--size-2) var(--size-3);
-  background-color: var(--warning-1);
+  background-color: var(--accent-warning);
 }
