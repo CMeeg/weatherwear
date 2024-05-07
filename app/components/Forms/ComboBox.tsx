@@ -36,7 +36,9 @@ function ComboBox<T extends object>({
   children,
   ...props
 }: ComboBoxProps<T>) {
-  const getFieldClassName = (renderProps: ComboBoxRenderProps) => {
+  const getFieldClassName = (
+    renderProps: ComboBoxRenderProps & { defaultClassName: string | undefined }
+  ) => {
     const renderClassName =
       typeof className === "function" ? className(renderProps) : className
 

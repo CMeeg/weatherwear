@@ -41,7 +41,9 @@ function Select<T extends object>({
 }: SelectProps<T>) {
   const [discovered, setDiscovered] = useState(false)
 
-  const getFieldClassName = (renderProps: SelectRenderProps) => {
+  const getFieldClassName = (
+    renderProps: SelectRenderProps & { defaultClassName: string | undefined }
+  ) => {
     const renderClassName =
       typeof className === "function" ? className(renderProps) : className
 
