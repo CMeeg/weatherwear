@@ -14,11 +14,13 @@ import {
 } from "~/lib/forecast/request.server"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWeatherApi } from "~/lib/weather/api.server"
+import { Cloud } from "~/components/Cloud/Cloud"
 import { Fieldset, Legend } from "~/components/Forms/Fieldset"
 import { ValidationSummary } from "~/components/Forms/ValidationSummary"
 import { GooglePlacesAutocomplete } from "~/components/Forms/GooglePlacesAutocomplete"
 import { Select, SelectItem } from "~/components/Forms/Select"
 import { Button } from "~/components/Forms/Button"
+import { clsx } from "clsx"
 import css from "./index.module.css"
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -122,7 +124,7 @@ export default function Index() {
 
   return (
     <>
-      <div className={css.intro}>
+      <div className={clsx(["wrapper", css.intro])}>
         <p>Not sure what to wear today based on the weather?</p>
         <p>
           Tell me where you&rsquo;ll be and a little bit about your fashion
@@ -130,80 +132,90 @@ export default function Index() {
         </p>
       </div>
 
-      {/* TODO: Use CSRF token and/or some type of captcha to protect form */}
-      <Form
-        method="post"
-        validationErrors={actionData?.errors}
-        onSubmit={onSubmit}
-      >
-        <Fieldset disabled={isSubmitting}>
-          <Legend className="h2">Get your forecast</Legend>
+      <Cloud className="wrapper">
+        {/* TODO: Use CSRF token and/or some type of captcha to protect form */}
+        <Form
+          method="post"
+          validationErrors={actionData?.errors}
+          onSubmit={onSubmit}
+        >
+          <Fieldset disabled={isSubmitting}>
+            <Legend className="h2">Get your forecast</Legend>
 
-          <ValidationSummary
-            heading="There was a problem getting your forecast:"
-            errors={actionData?.errors}
-          />
-
-          <div className={css.inlineFields}>
-            <GooglePlacesAutocomplete
-              className={css.inlineField}
-              name="location"
-              label="Today I'll be in "
-              placeholder="Enter a location"
-              description="."
-              isDisabled={isSubmitting}
+            <ValidationSummary
+              heading="There was a problem getting your forecast:"
+              errors={actionData?.errors}
             />
-          </div>
 
-          <div className={css.inlineFields}>
-            <Select
-              className={css.inlineField}
-              name="subject"
-              label="I'm a "
-              isDisabled={isSubmitting}
-              errorMessage={undefined}
-              isSecret={true}
-              items={requestForm.subject.items}
-              description="&nbsp;who likes to wear clothes&nbsp;"
-              defaultSelectedKey={requestForm.subject.items[0]?.id}
-            >
-              {(item) => (
-                <SelectItem id={item.id}>{item.name.toLowerCase()}</SelectItem>
-              )}
-            </Select>
-            <Select
-              className={css.inlineField}
-              name="fit"
-              label="made to fit "
-              description=".&nbsp;"
-              isDisabled={isSubmitting}
-              items={requestForm.fit.items}
-            >
-              {(item) => (
-                <SelectItem id={item.id}>{item.name.toLowerCase()}</SelectItem>
-              )}
-            </Select>
-            <Select
-              className={css.inlineField}
-              name="style"
-              label="I'd say my style is "
-              description="."
-              isDisabled={isSubmitting}
-              items={requestForm.style.items}
-            >
-              {(item) => (
-                <SelectItem id={item.id}>{item.name.toLowerCase()}</SelectItem>
-              )}
-            </Select>
-          </div>
+            <div className={css.inlineFields}>
+              <GooglePlacesAutocomplete
+                className={css.inlineField}
+                name="location"
+                label="Today I'll be in "
+                placeholder="Enter a location"
+                description="."
+                isDisabled={isSubmitting}
+              />
+            </div>
 
-          <div className={css.formActions}>
-            <Button type="submit" isDisabled={isSubmitting}>
-              {isSubmitting ? "Fetching your forecast" : "Give me some advice!"}
-            </Button>
-          </div>
-        </Fieldset>
-      </Form>
+            <div className={css.inlineFields}>
+              <Select
+                className={css.inlineField}
+                name="subject"
+                label="I'm a "
+                isDisabled={isSubmitting}
+                errorMessage={undefined}
+                isSecret={true}
+                items={requestForm.subject.items}
+                description="&nbsp;who likes to wear clothes&nbsp;"
+                defaultSelectedKey={requestForm.subject.items[0]?.id}
+              >
+                {(item) => (
+                  <SelectItem id={item.id}>
+                    {item.name.toLowerCase()}
+                  </SelectItem>
+                )}
+              </Select>
+              <Select
+                className={css.inlineField}
+                name="fit"
+                label="made to fit "
+                description=".&nbsp;"
+                isDisabled={isSubmitting}
+                items={requestForm.fit.items}
+              >
+                {(item) => (
+                  <SelectItem id={item.id}>
+                    {item.name.toLowerCase()}
+                  </SelectItem>
+                )}
+              </Select>
+              <Select
+                className={css.inlineField}
+                name="style"
+                label="I'd say my style is "
+                description="."
+                isDisabled={isSubmitting}
+                items={requestForm.style.items}
+              >
+                {(item) => (
+                  <SelectItem id={item.id}>
+                    {item.name.toLowerCase()}
+                  </SelectItem>
+                )}
+              </Select>
+            </div>
+
+            <div className={css.formActions}>
+              <Button type="submit" isDisabled={isSubmitting}>
+                {isSubmitting
+                  ? "Fetching your forecast"
+                  : "Give me some advice!"}
+              </Button>
+            </div>
+          </Fieldset>
+        </Form>
+      </Cloud>
     </>
   )
 }

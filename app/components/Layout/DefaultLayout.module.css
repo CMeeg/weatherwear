@@ -1,3 +1,5 @@
-.main {
-  padding: var(--size-3) var(--size-6);
+.canvas {
+  --canvas-gradient: linear-gradient(180deg, var(--canvas-1), var(--canvas-2) 35%, var(--surface-1) 75%);
+
+  background: var(--surface-1) var(--canvas-gradient) 0 0 no-repeat;
 }

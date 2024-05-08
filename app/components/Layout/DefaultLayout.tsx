@@ -3,12 +3,10 @@ import css from "./DefaultLayout.module.css"
 
 function DefaultLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className={css.canvas}>
       <Header />
-      <main className={css.main} role="main">
-        {children}
-      </main>
-    </>
+      <main role="main">{children}</main>
+    </div>
   )
 }
 

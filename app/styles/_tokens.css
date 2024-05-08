@@ -1,5 +1,7 @@
 html {
   /* Color */
+  --canvas-1: var(--blue-6);
+  --canvas-2: var(--blue-3);
   --surface-1: var(--gray-0);
   --surface-2: var(--gray-2);
   --surface-3: var(--gray-3);
@@ -17,16 +19,9 @@ html {
   --accent-disabled: var(--gray-3);
   --scrollthumb-color: var(--gray-7);
 
-
-
   /* Typography */
-
+  --font-ww: "Sen", system-ui, -apple-system, sans-serif;
 
   /* Spacing */
-
-
-
-  --font-ww: "Sen", system-ui, -apple-system, sans-serif;
   --size-content-4: 80ch;
-
 }

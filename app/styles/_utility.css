@@ -1,5 +1,68 @@
-/* Utility classes */
-.visually-hidden {
+:where(.wrapper) {
+  margin-top: var(--size-3);
+  padding: var(--size-3) var(--size-6);
+
+  @media (--md-n-above) {
+    padding: var(--size-3) var(--size-10);
+  }
+}
+
+/* Simple grid system (https://gomakethings.com/how-to-build-a-reusable-grid-system-with-css-grid/) */
+:where(.row) {
+  display: grid;
+  grid-gap: var(--size-3);
+
+  @media (--md-n-above) {
+    grid-template-rows: 1fr auto;
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+:where(.col-1) {
+  grid-column: auto / span 1;
+}
+
+:where(.col-2) {
+  grid-column: auto / span 2;
+}
+
+:where(.col-3) {
+  grid-column: auto / span 3;
+}
+
+:where(.col-4) {
+  grid-column: auto / span 4;
+}
+
+:where(.col-5) {
+  grid-column: auto / span 5;
+}
+
+:where(.col-6) {
+  grid-column: auto / span 6;
+}
+
+:where(.col-7) {
+  grid-column: auto / span 7;
+}
+
+:where(.col-8) {
+  grid-column: auto / span 8;
+}
+
+:where(.col-9) {
+  grid-column: auto / span 9;
+}
+
+:where(.col-10) {
+  grid-column: auto / span 10;
+}
+
+:where(.col-11) {
+  grid-column: auto / span 11;
+}
+
+:where(.visually-hidden) {
   position: absolute;
   width: 1px;
   height: 1px;

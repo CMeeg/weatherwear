@@ -3,10 +3,14 @@ import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node"
 import { useLoaderData, useLocation, Await } from "@remix-run/react"
 import { Suspense } from "react"
 import { useEventSource } from "remix-utils/sse/react"
+import { Image } from "@unpic/react"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWearForecastCompletionApi } from "~/lib/forecast/completion.server"
 import type { ForecastCompletionEventStatus } from "~/lib/forecast/completion.server"
-import { Forecast } from "~/components/Forecast/Forecast"
+import { Cloud } from "~/components/Cloud/Cloud"
+import { LinkButton } from "~/components/LinkButton/LinkButton"
+import { clsx } from "clsx"
+import css from "./Forecast.module.css"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   // Validate params
@@ -91,37 +95,65 @@ export default function Index() {
     event: "status"
   })
 
+  const ForecastCompletionStatus = () => {
+    return (
+      <div className={css.text}>
+        <p>
+          {statusMessages[status as ForecastCompletionEventStatus] ??
+            statusMessages["fetching_suggestion"]}
+        </p>
+      </div>
+    )
+  }
+
   const ForecastError = () => {
     // TODO: useAsyncError, useful? https://remix.run/docs/en/main/hooks/use-async-error
     // const error = useAsyncError()
-    return <p>{statusMessages["failed"]}</p>
+    return (
+      <div className={css.text}>
+        <p>{statusMessages["failed"]}</p>
+      </div>
+    )
   }
 
   return (
-    <>
-      <h2>Your forecast</h2>
+    <Cloud className="wrapper">
+      <div className={css.forecast}>
+        <h2>Your forecast</h2>
 
-      {/* TODO: Fix error - This Suspense boundary received an update before it finished hydrating. */}
-      {/* https://github.com/remix-run/remix/issues/5165
+        {/* TODO: Fix error - This Suspense boundary received an update before it finished hydrating. */}
+        {/* https://github.com/remix-run/remix/issues/5165
       https://github.com/remix-run/remix/issues/5153
       https://github.com/remix-run/remix/issues/5760
       https://github.com/remix-run/remix/issues/4822
       https://github.com/kiliman/remix-hydration-fix
       https://github.com/Xiphe/remix-island */}
-      <Suspense
-        fallback={
-          <p>
-            {statusMessages[status as ForecastCompletionEventStatus] ??
-              statusMessages["fetching_suggestion"]}
-          </p>
-        }
-      >
-        <Await resolve={completion} errorElement={<ForecastError />}>
-          {(forecast) => (
-            <Forecast text={forecast.text} imageUrl={forecast.image_url} />
-          )}
-        </Await>
-      </Suspense>
-    </>
+        <Suspense fallback={<ForecastCompletionStatus />}>
+          <Await resolve={completion} errorElement={<ForecastError />}>
+            {(forecast) => (
+              <div className="row">
+                <div className={clsx(["col-6", css.text])}>
+                  <p>{forecast.text}</p>
+                  <p>
+                    <LinkButton to="/">Request another forecast</LinkButton>
+                  </p>
+                </div>
+                {forecast.image_url && (
+                  <div className={clsx(["col-6", css.image])}>
+                    <Image
+                      src={forecast.image_url}
+                      width={1024}
+                      height={1024}
+                      alt=""
+                      // priority={true}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+          </Await>
+        </Suspense>
+      </div>
+    </Cloud>
   )
 }

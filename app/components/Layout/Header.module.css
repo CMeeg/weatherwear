@@ -1,37 +1,33 @@
-.header {
-  padding: var(--size-3) var(--size-6) 0;
-}
-
 .weatherwear {
   position: relative;
   font-size: var(--font-size-7);
-  text-wrap: nowrap;
 
   a {
     position: relative;
-    z-index: var(--layer-3);
+    z-index: var(--layer-2);
     display: block;
+    padding: var(--size-2) var(--size-6) 0 var(--size-9);
+    -webkit-text-fill-color: transparent;
+    text-wrap: nowrap;
+    background: var(--gradient-19);
+    background-clip: text;
+
+    @media (--md-n-above) {
+      padding-block-start: var(--size-2);
+      padding-inline-start: var(--size-10);
+    }
   }
 }
 
 .weather {
   position: absolute;
-  top: -22px;
-  left: -34px;
+  top: 0;
+  left: -5px;
   z-index: var(--layer-1);
   width: 80px;
   height: 80px;
-}
 
-.weather::after {
-  position: absolute;
-  top: 17px;
-  left: 31px;
-  z-index: var(--layer-2);
-  width: 40px;
-  height: 80px;
-  background-color: var(--surface-1);
-  transform: rotate(45deg);
-  opacity: 0.9;
-  content: '';
+  @media (--md-n-above) {
+    left: 0;
+  }
 }

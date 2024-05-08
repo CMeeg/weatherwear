@@ -100,7 +100,7 @@ jobs:
         shell: pwsh
 
       - name: 'Provision infrastructure'
-        run: azd provision --no-prompt
+        run: azd provision --no-prompt --no-state
         shell: pwsh
 
       - name: 'Deploy application'

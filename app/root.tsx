@@ -19,7 +19,7 @@ import { AppInsightsClient } from "~/components/AppInsights/Client"
 import { DefaultLayout } from "~/components/Layout/DefaultLayout"
 import { ClientEnvScript } from "~/components/ClientEnvScript"
 import { useLocale, I18nProvider, RouterProvider } from "react-aria-components"
-import "~/styles/base.css"
+import "~/styles/global.css"
 
 export const links: LinksFunction = () => {
   const links: ReturnType<LinksFunction> = [

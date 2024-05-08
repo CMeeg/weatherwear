@@ -38,7 +38,7 @@ const wearSuggestionSchema = z.object({
       completion_tokens: z.number(),
       total_tokens: z.number()
     }),
-    system_fingerprint: z.string()
+    system_fingerprint: z.string().nullable()
   })
 })
 
