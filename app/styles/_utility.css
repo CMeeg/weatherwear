@@ -1,10 +1,14 @@
 :where(.wrapper) {
-  margin-top: var(--size-3);
+  margin-block-start: var(--size-3);
   padding: var(--size-3) var(--size-6);
 
   @media (--md-n-above) {
     padding: var(--size-3) var(--size-10);
   }
+}
+
+:where(.wrapper.no-gap) {
+  margin-block-start: 0;
 }
 
 /* Simple grid system (https://gomakethings.com/how-to-build-a-reusable-grid-system-with-css-grid/) */

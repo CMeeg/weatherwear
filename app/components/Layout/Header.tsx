@@ -4,9 +4,15 @@ import css from "./Header.module.css"
 
 function Header() {
   return (
-    <header>
+    <header className={css.header}>
       <h1 className={css.weatherwear}>
-        <span className={css.weather}>
+        <Link to="/" className={css.text}>
+          <span className="visually-hidden">WeatherWear</span>
+          <svg>
+            <use href="/img/sprite.svg#weatherwear" />
+          </svg>
+        </Link>
+        <span className={css.icon}>
           <img
             src={getCdnUrl("/img/weather/clear-day.svg")}
             width="80"
@@ -14,7 +20,6 @@ function Header() {
             alt="Clear Day"
           />
         </span>
-        <Link to="/">weatherwear</Link>
       </h1>
     </header>
   )

@@ -44,10 +44,19 @@ export const links: LinksFunction = () => {
     })
   }
 
-  // This is used in the header
+  // These are used in the header
+
   links.push({
     rel: "preload",
-    as: "image/svg+xml",
+    as: "image",
+    type: "image/svg+xml",
+    href: "/img/sprite.svg"
+  })
+
+  links.push({
+    rel: "preload",
+    as: "image",
+    type: "image/svg+xml",
     href: getCdnUrl("/img/weather/clear-day.svg")
   })
 

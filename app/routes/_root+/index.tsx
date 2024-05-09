@@ -124,7 +124,7 @@ export default function Index() {
 
   return (
     <>
-      <div className={clsx(["wrapper", css.intro])}>
+      <div className={clsx(["wrapper", "no-gap", css.intro])}>
         <p>Not sure what to wear today based on the weather?</p>
         <p>
           Tell me where you&rsquo;ll be and a little bit about your fashion
