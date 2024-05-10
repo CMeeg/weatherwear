@@ -1,8 +1,11 @@
 import { Link } from "@remix-run/react"
+import { useForecastWeather } from "~/lib/forecast/weather"
 import { getCdnUrl } from "~/lib/url"
 import css from "./Header.module.css"
 
 function Header() {
+  const weather = useForecastWeather()
+
   return (
     <header className={css.header}>
       <h1 className={css.weatherwear}>
@@ -14,7 +17,7 @@ function Header() {
         </Link>
         <span className={css.icon}>
           <img
-            src={getCdnUrl("/img/weather/clear-day.svg")}
+            src={getCdnUrl(weather.icon_url)}
             width="80"
             height="80"
             alt="Clear Day"

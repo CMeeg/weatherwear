@@ -15,6 +15,7 @@ import { defaultLocale } from "./lib/i18n"
 import { getCdnUrl } from "~/lib/url"
 import { getClientEnv } from "~/lib/env.server"
 import { useNonce } from "~/components/NonceContext"
+import { useForecastWeather } from "~/lib/forecast/weather"
 import { AppInsightsClient } from "~/components/AppInsights/Client"
 import { DefaultLayout } from "~/components/Layout/DefaultLayout"
 import { ClientEnvScript } from "~/components/ClientEnvScript"
@@ -44,20 +45,11 @@ export const links: LinksFunction = () => {
     })
   }
 
-  // These are used in the header
-
   links.push({
     rel: "preload",
     as: "image",
     type: "image/svg+xml",
     href: "/img/sprite.svg"
-  })
-
-  links.push({
-    rel: "preload",
-    as: "image",
-    type: "image/svg+xml",
-    href: getCdnUrl("/img/weather/clear-day.svg")
   })
 
   return links
@@ -77,9 +69,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { culture, direction } = defaultLocale
   const navigate = useNavigate()
 
+  const weather = useForecastWeather()
+
   return (
     <I18nProvider locale={culture}>
-      <html lang={culture} dir={direction}>
+      <html lang={culture} dir={direction} data-weather={weather.codename}>
         <head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />

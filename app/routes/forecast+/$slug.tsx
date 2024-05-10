@@ -4,6 +4,7 @@ import { useLoaderData, useLocation, Await } from "@remix-run/react"
 import { Suspense } from "react"
 import { useEventSource } from "remix-utils/sse/react"
 import { Image } from "@unpic/react"
+import { getWeatherIconUrl, weatherCode, weatherCodename } from "~/lib/weather"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWearForecastCompletionApi } from "~/lib/forecast/completion.server"
 import type { ForecastCompletionEventStatus } from "~/lib/forecast/completion.server"
@@ -38,6 +39,21 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     throw new Response("Forecast not found.", { status: 404 })
   }
 
+  // Get the weather from the forecast
+
+  const forecastWeatherCode =
+    forecast.weather?.current_condition?.[0]?.weatherCode ?? "unknown"
+
+  const forecastWeatherCodename =
+    weatherCode[forecastWeatherCode] ?? weatherCodename.sunny
+
+  const weatherIconUrl = getWeatherIconUrl(forecastWeatherCodename)
+
+  const weather = {
+    codename: forecastWeatherCodename,
+    icon_url: weatherIconUrl
+  }
+
   // Get the status messages
 
   // TODO: Put these somewhere else
@@ -70,6 +86,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     })
 
   return defer({
+    weather,
     statusMessages,
     completion
   })
