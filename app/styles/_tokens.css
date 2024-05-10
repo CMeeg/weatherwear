@@ -17,7 +17,7 @@ html {
   --accent-1: var(--blue-5);
   --accent-2: var(--blue-7);
   --accent-3: var(--blue-9);
-  --accent-warning: var(--yellow-5);
+  --accent-error: var(--yellow-5);
   --accent-disabled: var(--gray-3);
   --scrollthumb-color: var(--gray-7);
 

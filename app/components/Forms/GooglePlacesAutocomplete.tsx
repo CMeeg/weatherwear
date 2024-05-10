@@ -54,7 +54,6 @@ function GooglePlacesAutocomplete<T extends object>({
           )
         }
       }}
-      isInvalid={(locationsFetcher.data?.error ?? "").length > 0}
       items={locationsFetcher.data?.items}
     >
       {(item) => <ComboBoxItem id={item.id}>{item.name}</ComboBoxItem>}

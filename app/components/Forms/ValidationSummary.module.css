@@ -4,13 +4,14 @@
 
 .errors {
   margin-block-start: var(--size-1);
-
-  li {
-    padding: var(--size-1) 0;
-  }
 }
 
 .error {
+  margin-block-start: var(--size-1);
+}
+
+.message {
+  display: inline-block;
   padding: var(--size-2) var(--size-3);
-  background-color: var(--accent-warning);
+  background-color: var(--accent-error);
 }

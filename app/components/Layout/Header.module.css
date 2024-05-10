@@ -1,16 +1,19 @@
 .header {
   display: flex;
-  padding-inline-end: var(--size-6);
+  padding-inline-start: var(--size-6);
 
   @media (--md-n-above) {
-    padding-inline-end: var(--size-10);
+    padding-inline: 0 var(--size-10);
   }
 }
 
 .weatherwear {
   display: flex;
-  flex-flow: row-reverse nowrap;
   align-self: flex-start;
+
+  @media (--md-n-above) {
+    flex-flow: row-reverse nowrap;
+  }
 }
 
 .text {

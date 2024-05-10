@@ -17,17 +17,17 @@ function ValidationSummary({ heading, errors }: ValidationSummaryProps) {
 
           <ul className={css.errors}>
             {Object.entries(errors).map(([name, error]) => (
-              <li key={name}>
+              <li key={name} className={css.error}>
                 {Array.isArray(error) ? (
-                  <ul>
+                  <ul className={css.errors}>
                     {error.map((message) => (
-                      <li key={`${name}_${message}`}>
-                        <span className={css.error}>{message}</span>
+                      <li key={`${name}_${message}`} className={css.error}>
+                        <span className={css.message}>{message}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <span className={css.error}>{error}</span>
+                  <span className={css.message}>{error}</span>
                 )}
               </li>
             ))}

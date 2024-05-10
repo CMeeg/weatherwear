@@ -18,7 +18,7 @@ import { useNonce } from "~/components/NonceContext"
 import { AppInsightsClient } from "~/components/AppInsights/Client"
 import { DefaultLayout } from "~/components/Layout/DefaultLayout"
 import { ClientEnvScript } from "~/components/ClientEnvScript"
-import { useLocale, I18nProvider, RouterProvider } from "react-aria-components"
+import { I18nProvider, RouterProvider } from "react-aria-components"
 import "~/styles/global.css"
 
 export const links: LinksFunction = () => {
@@ -111,12 +111,12 @@ export default function App() {
 export function ErrorBoundary() {
   const nonce = useNonce()
 
-  const { locale, direction } = useLocale()
+  const { culture, direction } = defaultLocale
 
   const error = useRouteError()
 
   return (
-    <html lang={locale} dir={direction}>
+    <html lang={culture} dir={direction}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
