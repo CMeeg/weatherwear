@@ -10,6 +10,10 @@ html {
   background-color: var(--surface-1);
   block-size: 100%;
   scrollbar-color: var(--scrollthumb-color) transparent;
+
+  @media (--motionOK) {
+    transition: color 2s ease-in-out, background-color 2s ease-in-out, scrollbar-color 2s ease-in-out;
+  }
 }
 
 :focus-visible {

@@ -73,7 +73,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <I18nProvider locale={culture}>
-      <html lang={culture} dir={direction} data-weather={weather.codename}>
+      <html lang={culture} dir={direction} data-theme={weather?.theme}>
         <head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />

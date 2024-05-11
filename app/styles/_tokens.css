@@ -1,14 +1,40 @@
+/* These are defined using @property so we can transition them (in browsers that support them) */
+@property --canvas-1 {
+  syntax: '<color>';
+  initial-value: #fff;
+  inherits: true;
+}
+
+@property --canvas-2 {
+  syntax: '<color>';
+  initial-value: #fff;
+  inherits: true;
+}
+
+@property --surface-1 {
+  syntax: '<color>';
+  initial-value: #fff;
+  inherits: true;
+}
+
+@property --surface-2 {
+  syntax: '<color>';
+  initial-value: #fff;
+  inherits: true;
+}
+
 html {
   /* Color */
-  --canvas-1: var(--blue-6);
-  --canvas-2: var(--blue-3);
-  --logo-stroke: var(--yellow-5);
-  --logo-fill: var(--yellow-5);
+  --canvas-1: var(--purple-11);
+  --canvas-2: var(--red-5);
+  --logo-stroke: var(--orange-5);
+  --logo-fill: var(--orange-5);
   --surface-1: var(--gray-0);
   --surface-2: var(--gray-2);
   --surface-3: var(--gray-3);
   --text-1: var(--gray-12);
   --text-2: var(--gray-7);
+  --text-canvas: var(--gray-1);
   --text-accent: var(--gray-1);
   --text-disabled: var(--gray-5);
   --text-selected: var(--blue-9);

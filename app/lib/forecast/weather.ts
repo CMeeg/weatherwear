@@ -1,24 +1,53 @@
 import { useRouteLoaderData } from "@remix-run/react"
 import type { loader as forecastLoader } from "~/routes/forecast+/$slug"
-import { getWeatherIconUrl, weatherCodename } from "~/lib/weather"
+import { getWeatherIconUrl, weatherCode, weatherTheme } from "~/lib/weather"
+import type { WeatherCodename } from "~/lib/weather"
+import type { Nullable } from "~/lib/core"
 
-const useForecastWeather = () => {
+interface ForecastWeather {
+  codename: WeatherCodename
+  icon_url: string
+  theme: string
+}
+
+const getForecastWeather = (
+  codename?: WeatherCodename
+): Nullable<ForecastWeather> => {
+  if (!codename) {
+    return null
+  }
+
+  return {
+    codename,
+    icon_url: getWeatherIconUrl(codename),
+    theme: weatherTheme[codename]
+  }
+}
+
+const getForecastWeatherFromWeatherCode = (
+  code: string
+): Nullable<ForecastWeather> => {
+  return getForecastWeather(weatherCode[code])
+}
+
+const useForecastWeather = (): Nullable<ForecastWeather> => {
   const loaderData = useRouteLoaderData<typeof forecastLoader>(
     "routes/forecast+/$slug"
   )
 
-  let weather = loaderData?.weather
+  const weather = loaderData?.weather
 
   if (!weather) {
-    const defaultWeatherCodename = weatherCodename.sunny
-
-    weather = {
-      codename: defaultWeatherCodename,
-      icon_url: getWeatherIconUrl(defaultWeatherCodename)
-    }
+    return null
   }
 
   return weather
 }
 
-export { useForecastWeather }
+export {
+  getForecastWeather,
+  getForecastWeatherFromWeatherCode,
+  useForecastWeather
+}
+
+export type { ForecastWeather }

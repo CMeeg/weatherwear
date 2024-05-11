@@ -51,6 +51,29 @@ const weatherIcon: Record<WeatherCodename, string> = {
   [weatherCodename.very_cloudy]: "cloudy.svg"
 }
 
+type WeatherTheme = "sun" | "cloud" | "rain" | "snow" | "storm"
+
+const weatherTheme: Record<WeatherCodename, WeatherTheme> = {
+  [weatherCodename.cloudy]: "cloud",
+  [weatherCodename.fog]: "cloud",
+  [weatherCodename.heavy_rain]: "rain",
+  [weatherCodename.heavy_showers]: "rain",
+  [weatherCodename.heavy_snow]: "snow",
+  [weatherCodename.heavy_snow_showers]: "snow",
+  [weatherCodename.light_rain]: "rain",
+  [weatherCodename.light_showers]: "rain",
+  [weatherCodename.light_sleet]: "rain",
+  [weatherCodename.light_sleet_showers]: "rain",
+  [weatherCodename.light_snow]: "snow",
+  [weatherCodename.light_snow_showers]: "snow",
+  [weatherCodename.partly_cloudy]: "cloud",
+  [weatherCodename.sunny]: "sun",
+  [weatherCodename.thundery_heavy_rain]: "storm",
+  [weatherCodename.thundery_showers]: "storm",
+  [weatherCodename.thundery_snow_showers]: "storm",
+  [weatherCodename.very_cloudy]: "cloud"
+}
+
 const weatherSymbol: Record<WeatherCodename, string> = {
   [weatherCodename.cloudy]: "☁️",
   [weatherCodename.fog]: "🌫",
@@ -127,24 +150,14 @@ function getWeatherIconUrl(codename: WeatherCodename) {
   return `/img/weather/${weatherIcon[codename]}`
 }
 
-function getWeatherIconUrlFromCode(code: string) {
-  const codename = weatherCode[code]
-
-  if (!codename) {
-    return null
-  }
-
-  return getWeatherIconUrl(codename)
-}
-
 export {
   temperatureUnit,
   weatherCodename,
   weatherIcon,
   weatherSymbol,
   weatherCode,
-  getWeatherIconUrl,
-  getWeatherIconUrlFromCode
+  weatherTheme,
+  getWeatherIconUrl
 }
 
 export type { TemperatureUnit, WeatherForecast, WeatherCodename }

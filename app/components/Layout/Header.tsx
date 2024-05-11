@@ -3,6 +3,29 @@ import { useForecastWeather } from "~/lib/forecast/weather"
 import { getCdnUrl } from "~/lib/url"
 import css from "./Header.module.css"
 
+function HeaderIcon({
+  weather
+}: {
+  weather: ReturnType<typeof useForecastWeather>
+}) {
+  if (weather) {
+    return (
+      <img
+        src={getCdnUrl(weather.icon_url)}
+        width="80"
+        height="80"
+        alt={weather.codename}
+      />
+    )
+  }
+
+  return (
+    <svg>
+      <use href="/img/sprite.svg#weather-app" />
+    </svg>
+  )
+}
+
 function Header() {
   const weather = useForecastWeather()
 
@@ -16,12 +39,7 @@ function Header() {
           </svg>
         </Link>
         <span className={css.icon}>
-          <img
-            src={getCdnUrl(weather.icon_url)}
-            width="80"
-            height="80"
-            alt="Clear Day"
-          />
+          <HeaderIcon weather={weather} />
         </span>
       </h1>
     </header>

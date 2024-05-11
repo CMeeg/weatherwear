@@ -1,5 +1,7 @@
 .canvas {
-  --canvas-gradient: linear-gradient(180deg, var(--canvas-1), var(--canvas-2) 35%, var(--surface-1) 75%);
+  background: var(--surface-1) linear-gradient(180deg, var(--canvas-1), var(--canvas-2) 400px, var(--surface-1) 600px) 0 0 no-repeat;
 
-  background: var(--surface-1) var(--canvas-gradient) 0 0 no-repeat;
+  @media (--motionOK) {
+    transition: background-color 2s ease-in-out, --canvas-1 2s ease-in-out, --canvas-2 2s ease-in-out, --surface-1 2s ease-in-out;
+  }
 }

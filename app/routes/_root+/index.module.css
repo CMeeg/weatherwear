@@ -1,5 +1,6 @@
 .intro {
   max-width: var(--size-content-4);
+  color: var(--text-canvas);
   font-size: var(--font-size-3);
 
   p {
@@ -8,6 +9,10 @@
 
   @media (--md-n-above) {
     font-size: var(--font-size-4);
+  }
+
+  @media (--motionOK) {
+    transition: color 2s ease-in-out;
   }
 }
 
