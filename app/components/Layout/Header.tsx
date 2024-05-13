@@ -1,13 +1,14 @@
 import { Link } from "@remix-run/react"
+import { clsx } from "clsx"
 import { useForecastWeather } from "~/lib/forecast/weather"
 import { getCdnUrl } from "~/lib/url"
 import css from "./Header.module.css"
 
-function HeaderIcon({
-  weather
-}: {
+interface HeaderIconProps {
   weather: ReturnType<typeof useForecastWeather>
-}) {
+}
+
+function HeaderIcon({ weather }: HeaderIconProps) {
   if (weather) {
     return (
       <img
@@ -26,11 +27,15 @@ function HeaderIcon({
   )
 }
 
-function Header() {
+interface HeaderProps {
+  className?: string
+}
+
+function Header({ className }: HeaderProps) {
   const weather = useForecastWeather()
 
   return (
-    <header className={css.header}>
+    <header className={clsx([css.header, className])}>
       <h1 className={css.weatherwear}>
         <Link to="/" className={css.text}>
           <span className="visually-hidden">WeatherWear</span>

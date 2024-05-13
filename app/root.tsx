@@ -5,9 +5,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-  useNavigate,
-  useRouteError,
-  isRouteErrorResponse
+  useNavigate
 } from "@remix-run/react"
 import type { LinksFunction } from "@remix-run/node"
 import { json } from "@remix-run/node"
@@ -102,35 +100,35 @@ export default function App() {
 // TODO: ErrorBoundary: https://remix.run/docs/en/main/guides/errors
 // Also: https://remix.run/docs/en/main/route/error-boundary
 // And: https://remix.run/docs/en/main/guides/not-found
-export function ErrorBoundary() {
-  const nonce = useNonce()
+// export function ErrorBoundary() {
+//   const nonce = useNonce()
 
-  const { culture, direction } = defaultLocale
+//   const { culture, direction } = defaultLocale
 
-  const error = useRouteError()
+//   const error = useRouteError()
 
-  return (
-    <html lang={culture} dir={direction}>
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Oops!</title>
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <AppInsightsClient>
-          <h2>
-            Error boundary says:{" "}
-            {isRouteErrorResponse(error)
-              ? `${error.status} ${error.statusText}`
-              : error instanceof Error
-                ? error.message
-                : "Unknown Error"}
-          </h2>
-        </AppInsightsClient>
-        <Scripts nonce={nonce} />
-      </body>
-    </html>
-  )
-}
+//   return (
+//     <html lang={culture} dir={direction}>
+//       <head>
+//         <meta charSet="utf-8" />
+//         <meta name="viewport" content="width=device-width, initial-scale=1" />
+//         <title>Oops!</title>
+//         <Meta />
+//         <Links />
+//       </head>
+//       <body>
+//         <AppInsightsClient>
+//           <h2>
+//             Error boundary says:{" "}
+//             {isRouteErrorResponse(error)
+//               ? `${error.status} ${error.statusText}`
+//               : error instanceof Error
+//                 ? error.message
+//                 : "Unknown Error"}
+//           </h2>
+//         </AppInsightsClient>
+//         <Scripts nonce={nonce} />
+//       </body>
+//     </html>
+//   )
+// }

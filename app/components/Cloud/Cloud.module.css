@@ -1,10 +1,10 @@
 @import url("open-props/masks/edges");
 
 .cloud {
-  background: var(--surface-1) linear-gradient(180deg, var(--surface-2), var(--surface-1) 20%) 0 0 no-repeat;
+  background: transparent linear-gradient(180deg, var(--surface-2), var(--surface-1) 60px) 0 0 no-repeat;
   mask: var(--mask-edge-scalloped-top);
 
   @media (--motionOK) {
-    transition: background-color 2s ease-in-out, --surface-1 2s ease-in-out, --surface-2 2s ease-in-out;
+    transition: --surface-1 500ms ease-in-out, --surface-2 500ms ease-in-out;
   }
 }

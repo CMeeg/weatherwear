@@ -38,8 +38,9 @@ html {
   --text-accent: var(--gray-1);
   --text-disabled: var(--gray-5);
   --text-selected: var(--blue-9);
-  --link: var(--indigo-7);
-  --link-visited: var(--purple-7);
+  --link: var(--blue-5);
+  --link-hover: var(--blue-9);
+  --link-visited: var(--blue-5);
   --accent-1: var(--blue-5);
   --accent-2: var(--blue-7);
   --accent-3: var(--blue-9);

@@ -101,7 +101,7 @@ export const loader = async () => {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  if (!data) {
+  if (!data?.meta) {
     return []
   }
 

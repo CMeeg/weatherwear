@@ -6,6 +6,10 @@ interface ClientEnvScriptProps {
 }
 
 const ClientEnvScript = ({ env, nonce }: ClientEnvScriptProps) => {
+  if (!env) {
+    return <></>
+  }
+
   return (
     <script
       nonce={nonce}

@@ -1,7 +1,29 @@
 .canvas {
-  background: var(--surface-1) linear-gradient(180deg, var(--canvas-1), var(--canvas-2) 400px, var(--surface-1) 600px) 0 0 no-repeat;
+  display: grid;
+  grid-template:
+    "header" auto "main" auto "footer" 1fr;
+  min-height: 100vh;
+  background: transparent linear-gradient(180deg, var(--canvas-1), var(--canvas-2) 200px) 0 0 no-repeat;
 
   @media (--motionOK) {
-    transition: background-color 2s ease-in-out, --canvas-1 2s ease-in-out, --canvas-2 2s ease-in-out, --surface-1 2s ease-in-out;
+    transition: --canvas-1 2s ease-in-out, --canvas-2 2s ease-in-out;
   }
+}
+
+.header {
+  grid-area: header;
+}
+
+.main {
+  grid-area: main;
+}
+
+.main > :last-child {
+  padding-block-end: var(--size-6);
+}
+
+.footer {
+  grid-area: footer;
+  margin-block-start: calc(-1 * var(--size-3));
+  background-color: var(--surface-1);
 }

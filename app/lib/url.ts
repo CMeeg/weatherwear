@@ -24,6 +24,11 @@ const joinUrlSegments = (segments?: string[] | null) => {
 
 const getAbsoluteUrl = (path?: string) => {
   const env = getEnv()
+
+  if (!env) {
+    return path ?? ""
+  }
+
   const baseUrl = env.BASE_URL
 
   if (!path) {

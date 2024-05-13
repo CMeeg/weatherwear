@@ -73,20 +73,30 @@ html {
   inline-size: var(--size-10);
 }
 
-:where(a[href]) {
+:where(a[href]),
+:where(a[href]):where(:link),
+:where(a):where([href]),
+:where(a):where([href]):where(:link) {
   color: var(--link);
+  text-decoration-color: var(--link);
 }
 
-:where(a[href]):where(:visited) {
-  color: var(--link-visited);
-}
-
-:where(a):where([href]) {
-  text-decoration-color: var(--indigo-2);
-}
-
+:where(a[href]):where(:visited),
 :where(a):where([href]):where(:visited) {
-  text-decoration-color: var(--purple-2);
+  color: var(--link-visited);
+  text-decoration-color: var(--link-visited);
+}
+
+:where(a[href]):where(:hover),
+:where(a[href]):where(:active) {
+  color: var(--link-hover);
+  text-decoration-color: var(--link-hover);
+  text-decoration-style: wavy;
+  text-decoration-thickness: from-font;
+
+  @media (--motionOK) {
+    transition: color 200ms ease-in-out, text-decoration-color 200ms ease-in-out;
+  }
 }
 
 :where(a):where(:not(:hover)) {

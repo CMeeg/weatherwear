@@ -10,7 +10,8 @@ const AppInsightsContextProvider = lazy(() => import("./Context"))
 
 const AppInsightsClient: FC<AppInsightsClientProps> = ({ children }) => {
   const env = useEnv()
-  const connectionString = env.APPLICATIONINSIGHTS_CONNECTION_STRING
+
+  const connectionString = env?.APPLICATIONINSIGHTS_CONNECTION_STRING
 
   if (!connectionString) {
     return <>{children}</>
