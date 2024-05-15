@@ -1,10 +1,14 @@
 .intro {
   max-width: var(--size-content-4);
-  color: var(--text-canvas);
+  color: hsl(var(--text-canvas));
   font-size: var(--font-size-3);
 
   p {
     margin-block-start: var(--size-3);
+  }
+
+  :global(.highlight) {
+    text-decoration-color: hsl(var(--text-canvas));
   }
 
   @media (--md-n-above) {

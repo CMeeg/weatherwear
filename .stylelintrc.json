@@ -6,6 +6,12 @@
       {
         "message": "Selector should be written in kebab-case or camelCase."
       }
+    ],
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["global"]
+      }
     ]
   }
 }

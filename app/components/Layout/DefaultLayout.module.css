@@ -3,11 +3,15 @@
   grid-template:
     "header" auto "main" auto "footer" 1fr;
   min-height: 100vh;
-  background: transparent linear-gradient(180deg, var(--canvas-1), var(--canvas-2) 200px) 0 0 no-repeat;
+  background: transparent linear-gradient(180deg, var(--canvas-1), var(--canvas-2) 100px) 0 0 no-repeat;
 
   @media (--motionOK) {
     transition: --canvas-1 2s ease-in-out, --canvas-2 2s ease-in-out;
   }
+}
+
+.canvas:global(.home) {
+  background-image: linear-gradient(180deg, var(--canvas-1), var(--canvas-2) 350px);
 }
 
 .header {

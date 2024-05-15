@@ -66,6 +66,10 @@
   grid-column: auto / span 11;
 }
 
+:where(.highlight) {
+  background-color: hsl(var(--text-canvas) / 20%);
+}
+
 :where(.visually-hidden) {
   position: absolute;
   width: 1px;

@@ -125,10 +125,16 @@ export default function Index() {
   return (
     <>
       <div className={clsx(["wrapper", "no-gap", css.intro])}>
-        <p>Not sure what to wear today based on the weather?</p>
         <p>
-          Tell me where you&rsquo;ll be and a little bit about your fashion
-          preferences and I&rsquo;ll give you some advice on what to wear.
+          Not sure <span className="highlight">what to wear</span> today based
+          on the weather?
+        </p>
+        <p>
+          Tell me <span className="highlight">where you&rsquo;ll be</span> and a
+          little bit about your{" "}
+          <span className="highlight">fashion preferences</span> and I&rsquo;ll
+          give you some <span className="highlight">advice</span> on what to
+          wear.
         </p>
       </div>
 
