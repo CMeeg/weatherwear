@@ -1,6 +1,11 @@
 import { useRouteLoaderData } from "@remix-run/react"
 import type { loader as forecastLoader } from "~/routes/forecast+/$slug"
-import { getWeatherIconUrl, weatherCode, weatherTheme } from "~/lib/weather"
+import {
+  getWeatherIconUrl,
+  weatherCode,
+  weatherTheme,
+  weatherSymbol
+} from "~/lib/weather"
 import type { WeatherCodename } from "~/lib/weather"
 import type { Nullable } from "~/lib/core"
 
@@ -44,10 +49,32 @@ const useForecastWeather = (): Nullable<ForecastWeather> => {
   return weather
 }
 
+const getWeatherSymbolFromCode = (code: string): Nullable<string> => {
+  if (!code) {
+    return null
+  }
+
+  const codename = weatherCode[code]
+
+  if (!codename) {
+    return null
+  }
+
+  return weatherSymbol[codename]
+}
+
+const formatTime = (time: string): string => {
+  const hour = parseInt(time, 10) / 100
+
+  return hour.toString().padStart(2, "0") + "00"
+}
+
 export {
   getForecastWeather,
   getForecastWeatherFromWeatherCode,
-  useForecastWeather
+  useForecastWeather,
+  getWeatherSymbolFromCode,
+  formatTime
 }
 
 export type { ForecastWeather }

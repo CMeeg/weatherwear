@@ -41,6 +41,7 @@ html {
   --link: var(--blue-5);
   --link-hover: var(--blue-9);
   --link-visited: var(--blue-5);
+  --table-border: var(--gray-3);
   --accent-1: var(--blue-5);
   --accent-2: var(--blue-7);
   --accent-3: var(--blue-9);

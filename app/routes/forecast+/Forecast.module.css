@@ -16,3 +16,15 @@
     box-shadow: var(--shadow-2);
   }
 }
+
+.hourly {
+  thead th,
+  tbody td {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  tbody tr:first-child td {
+    font-size: var(--font-size-5);
+  }
+}

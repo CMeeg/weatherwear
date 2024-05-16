@@ -2,6 +2,7 @@
   display: grid;
   grid-template:
     "header" auto "main" auto "footer" 1fr;
+  grid-template-columns: 1fr;
   min-height: 100vh;
   background: transparent linear-gradient(180deg, var(--canvas-1), var(--canvas-2) 100px) 0 0 no-repeat;
 
@@ -20,6 +21,7 @@
 
 .main {
   grid-area: main;
+  min-width: 0;
 }
 
 .main > :last-child {

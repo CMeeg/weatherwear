@@ -4,7 +4,11 @@ import { useLoaderData, useLocation, Await } from "@remix-run/react"
 import { Suspense } from "react"
 import { useEventSource } from "remix-utils/sse/react"
 import { Image } from "@unpic/react"
-import { getForecastWeatherFromWeatherCode } from "~/lib/forecast/weather"
+import {
+  getForecastWeatherFromWeatherCode,
+  getWeatherSymbolFromCode,
+  formatTime
+} from "~/lib/forecast/weather"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWearForecastCompletionApi } from "~/lib/forecast/completion.server"
 import type { ForecastCompletionEventStatus } from "~/lib/forecast/completion.server"
@@ -42,9 +46,21 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   // Get the weather from the forecast
 
   const forecastWeatherCode =
-    forecast.weather?.current_condition?.[0]?.weatherCode ?? "unknown"
+    forecast.weather.current_condition?.[0]?.weatherCode ?? "unknown"
 
   const weather = getForecastWeatherFromWeatherCode(forecastWeatherCode)
+
+  const hourlyWeather = (forecast.weather.weather?.[0]?.hourly ?? []).map(
+    (hourly) => {
+      return {
+        time: formatTime(hourly.time),
+        chance_of_rain: hourly.chanceofrain,
+        temp_c: hourly.tempC,
+        weather_description: hourly.weatherDesc?.[0]?.value ?? null,
+        weather_symbol: getWeatherSymbolFromCode(hourly.weatherCode)
+      }
+    }
+  )
 
   // Get the status messages
 
@@ -79,6 +95,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   return defer({
     weather,
+    hourlyWeather,
     statusMessages,
     completion
   })
@@ -96,7 +113,8 @@ export const meta: MetaFunction = () => {
 }
 
 export default function Index() {
-  const { statusMessages, completion } = useLoaderData<typeof loader>()
+  const { hourlyWeather, statusMessages, completion } =
+    useLoaderData<typeof loader>()
 
   const location = useLocation()
 
@@ -141,14 +159,62 @@ export default function Index() {
           <Await resolve={completion} errorElement={<ForecastError />}>
             {(forecast) => (
               <div className="row">
-                <div className={clsx(["col-6", css.text])}>
+                <div className={clsx(["col-7", css.text])}>
                   <p>{forecast.text}</p>
+
+                  <div
+                    className="table-wrapper"
+                    role="group"
+                    aria-labelledby="content"
+                  >
+                    <table className={css.hourly}>
+                      <thead>
+                        <tr>
+                          <th></th>
+                          {hourlyWeather.map((hourly) => (
+                            <th key={hourly.time} scope="col">
+                              {hourly.time}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">Weather</th>
+                          {hourlyWeather.map((hourly) => (
+                            <td key={hourly.time}>
+                              <span title={hourly.weather_description ?? ""}>
+                                {hourly.weather_symbol}
+                              </span>
+                            </td>
+                          ))}
+                        </tr>
+                        <tr>
+                          <th scope="row" title="Temperature (Celcius)">
+                            Temperature
+                          </th>
+                          {hourlyWeather.map((hourly) => (
+                            <td key={hourly.time}>{`${hourly.temp_c}°C`}</td>
+                          ))}
+                        </tr>
+                        <tr>
+                          <th scope="row">Chance of rain</th>
+                          {hourlyWeather.map((hourly) => (
+                            <td
+                              key={hourly.time}
+                            >{`${hourly.chance_of_rain}%`}</td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
                   <p>
                     <LinkButton to="/">Request another forecast</LinkButton>
                   </p>
                 </div>
                 {forecast.image_url && (
-                  <div className={clsx(["col-6", css.image])}>
+                  <div className={clsx(["col-5", css.image])}>
                     <Image
                       src={forecast.image_url}
                       width={1024}

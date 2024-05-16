@@ -111,3 +111,20 @@ html {
   color: var(--gray-7);
   opacity: 0.75;
 }
+
+:where(table) {
+  margin-block-start: var(--size-3);
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+:where(th, td) {
+  padding: var(--size-3);
+  border-block-end: 1px solid var(--table-border);
+}
+
+:where(th) {
+  font-weight: var(--font-weight-9);
+  text-align: left;
+}
