@@ -113,7 +113,6 @@ html {
 }
 
 :where(table) {
-  margin-block-start: var(--size-3);
   table-layout: fixed;
   border-collapse: collapse;
   border-spacing: 0;

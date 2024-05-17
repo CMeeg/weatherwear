@@ -14,7 +14,6 @@ import { createWearForecastCompletionApi } from "~/lib/forecast/completion.serve
 import type { ForecastCompletionEventStatus } from "~/lib/forecast/completion.server"
 import { Cloud } from "~/components/Cloud/Cloud"
 import { LinkButton } from "~/components/LinkButton/LinkButton"
-import { clsx } from "clsx"
 import css from "./Forecast.module.css"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
@@ -124,7 +123,7 @@ export default function Index() {
 
   const ForecastCompletionStatus = () => {
     return (
-      <div className={css.text}>
+      <div className={css.status}>
         <p>
           {statusMessages[status as ForecastCompletionEventStatus] ??
             statusMessages["fetching_suggestion"]}
@@ -137,8 +136,13 @@ export default function Index() {
     // TODO: useAsyncError, useful? https://remix.run/docs/en/main/hooks/use-async-error
     // const error = useAsyncError()
     return (
-      <div className={css.text}>
-        <p>{statusMessages["failed"]}</p>
+      <div className={css.error}>
+        <p>
+          <span>{statusMessages["failed"]}</span>
+        </p>
+        <p>
+          <LinkButton to="/">Try again</LinkButton>
+        </p>
       </div>
     )
   }
@@ -158,16 +162,18 @@ export default function Index() {
         <Suspense fallback={<ForecastCompletionStatus />}>
           <Await resolve={completion} errorElement={<ForecastError />}>
             {(forecast) => (
-              <div className="row">
-                <div className={clsx(["col-7", css.text])}>
+              <div className={css.completion}>
+                <div className={css.weather}>
                   <p>{forecast.text}</p>
+                </div>
 
+                <div className={css.hourly}>
                   <div
                     className="table-wrapper"
                     role="group"
                     aria-labelledby="content"
                   >
-                    <table className={css.hourly}>
+                    <table>
                       <thead>
                         <tr>
                           <th></th>
@@ -208,13 +214,10 @@ export default function Index() {
                       </tbody>
                     </table>
                   </div>
-
-                  <p>
-                    <LinkButton to="/">Request another forecast</LinkButton>
-                  </p>
                 </div>
+
                 {forecast.image_url && (
-                  <div className={clsx(["col-5", css.image])}>
+                  <div className={css.image}>
                     <Image
                       src={forecast.image_url}
                       width={1024}
@@ -224,6 +227,10 @@ export default function Index() {
                     />
                   </div>
                 )}
+
+                <div className={css.options}>
+                  <LinkButton to="/">Request another forecast</LinkButton>
+                </div>
               </div>
             )}
           </Await>

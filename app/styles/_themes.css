@@ -31,9 +31,9 @@
   --canvas-2: var(--gray-6);
   --logo-stroke: var(--stone-9);
   --logo-fill: var(--stone-5);
-  --surface-1: var(--gray-6);
-  --surface-2: var(--stone-6);
-  --surface-3: var(--gray-9);
+  --surface-1: var(--gray-4);
+  --surface-2: var(--gray-5);
+  --surface-3: var(--gray-8);
   --text-1: var(--gray-12);
   --text-2: var(--gray-7);
   --text-canvas: var(--gray-12-hsl);
@@ -43,7 +43,7 @@
   --link: var(--purple-10);
   --link-hover: var(--purple-12);
   --link-visited: var(--purple-10);
-  --table-border: var(--gray-8);
+  --table-border: var(--gray-5);
   --accent-1: var(--purple-10);
   --accent-2: var(--purple-11);
   --accent-3: var(--purple-12);
@@ -57,7 +57,7 @@
   --canvas-1: var(--gray-6);
   --canvas-2: var(--gray-4);
   --logo-stroke: var(--blue-3);
-  --logo-fill: var(--blue-4);
+  --logo-fill: var(--blue-5);
   --surface-1: var(--gray-0);
   --surface-2: var(--gray-2);
   --surface-3: var(--gray-3);
