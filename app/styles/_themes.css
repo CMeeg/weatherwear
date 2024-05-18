@@ -1,3 +1,86 @@
+[data-theme="morning"] {
+  /* Color */
+  --canvas-1: var(--pink-6);
+  --canvas-2: var(--red-3);
+  --logo-stroke: var(--yellow-3);
+  --logo-fill: var(--yellow-3);
+  --surface-1: var(--gray-0);
+  --surface-2: var(--gray-2);
+  --surface-3: var(--gray-3);
+  --text-1: var(--gray-12);
+  --text-2: var(--gray-7);
+  --text-canvas: var(--gray-12-hsl);
+  --text-accent: var(--gray-1);
+  --text-disabled: var(--gray-5);
+  --text-selected: var(--blue-9);
+  --link: var(--blue-5);
+  --link-hover: var(--blue-9);
+  --link-visited: var(--blue-5);
+  --table-border: var(--gray-3);
+  --accent-1: var(--blue-5);
+  --accent-2: var(--blue-7);
+  --accent-3: var(--blue-9);
+  --accent-error: var(--yellow-5);
+  --accent-disabled: var(--gray-3);
+  --scrollthumb-color: var(--pink-5);
+}
+
+/* [data-theme="day"] uses the default theme */
+
+[data-theme="evening"] {
+  /* Color */
+  --canvas-1: var(--purple-11);
+  --canvas-2: var(--red-5);
+  --logo-stroke: var(--orange-5);
+  --logo-fill: var(--orange-5);
+  --surface-1: var(--gray-0);
+  --surface-2: var(--gray-2);
+  --surface-3: var(--gray-3);
+  --text-1: var(--gray-12);
+  --text-2: var(--gray-7);
+  --text-canvas: var(--gray-1-hsl);
+  --text-accent: var(--gray-1);
+  --text-disabled: var(--gray-5);
+  --text-selected: var(--blue-9);
+  --link: var(--blue-5);
+  --link-hover: var(--blue-9);
+  --link-visited: var(--blue-5);
+  --table-border: var(--gray-3);
+  --accent-1: var(--blue-5);
+  --accent-2: var(--blue-7);
+  --accent-3: var(--blue-9);
+  --accent-error: var(--yellow-5);
+  --accent-disabled: var(--gray-3);
+  --scrollthumb-color: var(--purple-9);
+}
+
+[data-theme="night"] {
+  /* Color */
+  --canvas-1: var(--gray-11);
+  --canvas-2: var(--purple-12);
+  --logo-stroke: var(--cyan-0);
+  --logo-fill: var(--cyan-0);
+  --surface-1: var(--gray-0);
+  --surface-2: var(--gray-2);
+  --surface-3: var(--gray-3);
+  --text-1: var(--gray-12);
+  --text-2: var(--gray-7);
+  --text-canvas: var(--gray-1-hsl);
+  --text-accent: var(--gray-1);
+  --text-disabled: var(--gray-5);
+  --text-selected: var(--blue-9);
+  --link: var(--blue-5);
+  --link-hover: var(--blue-9);
+  --link-visited: var(--blue-5);
+  --table-border: var(--gray-3);
+  --accent-1: var(--blue-5);
+  --accent-2: var(--blue-7);
+  --accent-3: var(--blue-9);
+  --accent-error: var(--yellow-5);
+  --accent-disabled: var(--gray-3);
+  --scrollthumb-color: var(--purple-9);
+}
+
 [data-theme="sun"] {
   /* Color */
   --canvas-1: var(--blue-6);

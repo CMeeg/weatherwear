@@ -13,7 +13,7 @@ import { defaultLocale } from "./lib/i18n"
 import { getCdnUrl } from "~/lib/url"
 import { getClientEnv } from "~/lib/env.server"
 import { useNonce } from "~/components/NonceContext"
-import { useForecastWeather } from "~/lib/forecast/weather"
+import { useTheme } from "~/lib/theme"
 import { AppInsightsClient } from "~/components/AppInsights/Client"
 import { DefaultLayout } from "~/components/Layout/DefaultLayout"
 import { ClientEnvScript } from "~/components/ClientEnvScript"
@@ -67,11 +67,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { culture, direction } = defaultLocale
   const navigate = useNavigate()
 
-  const weather = useForecastWeather()
+  const theme = useTheme()
 
   return (
     <I18nProvider locale={culture}>
-      <html lang={culture} dir={direction} data-theme={weather?.theme}>
+      <html lang={culture} dir={direction} data-theme={theme}>
         <head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
