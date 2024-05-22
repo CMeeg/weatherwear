@@ -5,8 +5,8 @@ import { Suspense } from "react"
 import { useEventSource } from "remix-utils/sse/react"
 import { Image } from "@unpic/react"
 import {
-  getForecastWeatherFromWeatherCode,
-  getWeatherSymbolFromCode,
+  getForecastWeatherFromWeatherId,
+  getWeatherSymbolFromId,
   formatTime
 } from "~/lib/forecast/weather"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
@@ -44,22 +44,20 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   // Get the weather from the forecast
 
-  const forecastWeatherCode =
-    forecast.weather.current_condition?.[0]?.weatherCode ?? "unknown"
+  // TODO: Need to work out some kind of "average" weather for the day
+  const forecastWeatherId = forecast.weather.list[4]?.weather[0]?.id ?? 0
 
-  const weather = getForecastWeatherFromWeatherCode(forecastWeatherCode)
+  const weather = getForecastWeatherFromWeatherId(forecastWeatherId)
 
-  const hourlyWeather = (forecast.weather.weather?.[0]?.hourly ?? []).map(
-    (hourly) => {
-      return {
-        time: formatTime(hourly.time),
-        chance_of_rain: hourly.chanceofrain,
-        temp_c: hourly.tempC,
-        weather_description: hourly.weatherDesc?.[0]?.value ?? null,
-        weather_symbol: getWeatherSymbolFromCode(hourly.weatherCode)
-      }
+  const hourlyWeather = forecast.weather.list.map((hourly) => {
+    return {
+      time: formatTime(hourly.dt_txt),
+      chance_of_rain: hourly.pop * 100,
+      temp_c: Math.round(hourly.main.temp * 2) / 2,
+      weather_description: hourly.weather[0]?.description ?? null,
+      weather_symbol: getWeatherSymbolFromId(hourly.weather[0]?.id ?? 0)
     }
-  )
+  })
 
   // Get the status messages
 

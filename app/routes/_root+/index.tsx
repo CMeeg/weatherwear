@@ -12,12 +12,13 @@ import {
   wearForecastRequestValidator,
   getForecastRequestFormProps
 } from "~/lib/forecast/request.server"
+import { createPlacesApi } from "~/lib/places/api.server"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWeatherApi } from "~/lib/weather/api.server"
 import { Cloud } from "~/components/Cloud/Cloud"
 import { Fieldset, Legend } from "~/components/Forms/Fieldset"
 import { ValidationSummary } from "~/components/Forms/ValidationSummary"
-import { GooglePlacesAutocomplete } from "~/components/Forms/GooglePlacesAutocomplete"
+import { CityAutocomplete } from "~/components/Forms/CityAutocomplete"
 import { Select, SelectItem } from "~/components/Forms/Select"
 import { Button } from "~/components/Forms/Button"
 import { clsx } from "clsx"
@@ -41,10 +42,23 @@ export async function action({ request }: ActionFunctionArgs) {
 
   // Fetch and validate weather forecast for provided location
 
+  const [city, cityError] = await createPlacesApi().fetchCity(
+    forecastRequest.location
+  )
+
+  if (!city || cityError) {
+    return {
+      errors: {
+        location:
+          "Sorry we couldn't find the selected location. Please try again."
+      }
+    }
+  }
+
   const weatherApi = createWeatherApi()
 
   const [weatherForecast, weatherForecastError] =
-    await weatherApi.fetchForecast(forecastRequest.location)
+    await weatherApi.fetchForecast(city)
 
   if (weatherForecastError) {
     // TODO: There seems to be a bug where if this error is triggered you can't resubmit the form - like the error persists
@@ -63,6 +77,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const [forecast, forecastError] = await forecastApi.createForecast(
     forecastRequest,
+    city,
     weatherForecast
   )
 
@@ -154,7 +169,7 @@ export default function Index() {
             />
 
             <div className={css.inlineFields}>
-              <GooglePlacesAutocomplete
+              <CityAutocomplete
                 className={css.inlineField}
                 name="location"
                 label="Today I'll be in "

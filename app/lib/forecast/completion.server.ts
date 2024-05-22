@@ -38,52 +38,28 @@ const formatContent = (content: string[]) => {
 const getWeatherForecastContent = (
   weatherForecast: WeatherForecast
 ): string => {
-  const forecastNearestArea = weatherForecast.nearest_area?.[0]
-  const forecastWeather = weatherForecast.weather?.[0]
-
-  if (!forecastNearestArea || !forecastWeather) {
-    return ""
-  }
-
   const location = {
-    areaName: forecastNearestArea.areaName?.[0]?.value ?? "",
-    region: forecastNearestArea.region?.[0]?.value ?? "",
-    country: forecastNearestArea.country?.[0]?.value ?? ""
+    areaName: weatherForecast.city.name,
+    country: weatherForecast.city.country
   }
 
   const weather = {
-    astronomy: forecastWeather.astronomy?.[0],
-    avgTempC: forecastWeather.avgtempC,
-    date: forecastWeather.date,
-    hourly: Array.isArray(forecastWeather.hourly)
-      ? forecastWeather.hourly.map((h) => {
+    hourly: weatherForecast.list.map((h) => {
+      return {
+        ...h.main,
+        weather: h.weather.map((w) => {
           return {
-            feelsLikeC: h.FeelsLikeC,
-            windchillC: h.WindChillC,
-            windGustKmph: h.WindGustKmph,
-            chanceOfFog: h.chanceoffog,
-            chanceOfFrost: h.chanceoffrost,
-            chanceOfHighTemp: h.chanceofhightemp,
-            chanceOfOvercast: h.chanceofovercast,
-            chanceOfRain: h.chanceofrain,
-            chanceOfRemainDry: h.chanceofremdry,
-            chanceOfSnow: h.chanceofsnow,
-            chanceOfSunshine: h.chanceofsunshine,
-            chanceOfThunder: h.chanceofthunder,
-            chanceOfWindy: h.chanceofwindy,
-            cloudCover: h.cloudcover,
-            humidity: h.humidity,
-            precipitationMM: h.precipMM,
-            pressure: h.pressure,
-            tempC: h.tempC,
-            time: h.time,
-            uvIndex: h.uvIndex,
-            visibilityKm: h.visibility,
-            weatherDesc: h.weatherDesc?.[0]?.value ?? "",
-            windspeedKmph: h.windspeedKmph
+            main: w.main,
+            description: w.description
           }
-        })
-      : []
+        }),
+        clouds: h.clouds,
+        wind: h.wind,
+        visibility: h.visibility,
+        chanceOfRain: h.pop * 100,
+        time: h.dt_txt
+      }
+    })
   }
 
   return JSON.stringify({ location, weather })
@@ -117,8 +93,9 @@ const fetchSuggestion = async (
           content: formatContent([
             "You are a helpful fashion assistant. You are giving advice on what to wear based on the current local weather.",
             "You are informative in your advice, but as concise as possible providing 2-3 sentences at the most.",
-            "You separately provide a third-person objective description of the subject wearing the clothes that you have advised so that they can picture themselves in them, but you are as concise as possible providing 1 sentence at the most.",
-            "You separately provide a brief summary of the day's weather using simple keywords, but you are as concise as possible providing 10 keywords at the most. You don't include the temperature or other numbers in this weather summary, but you can in the advice above.",
+            "You separately provide a third-person objective description of the subject wearing the clothes that can be used as a prompt to generate an image of the subject wearing the clothes that you have advised, but keep the prompt as concise as possible providing 1 sentence at the most.",
+            "You separately provide a brief summary of the day's weather using simple keywords, but you are as concise as possible providing 10 keywords at the most.",
+            "You don't include the temperature or other numbers in the description prompt or the summary keywords.",
             `You format the output as JSON. You use a consistent JSON schema, which is as follows: { "advice": "string", "description": "string", "weather": "string" }`
           ])
         },
@@ -181,7 +158,7 @@ const generateImageFromSuggestion = async (
   }
 
   const { subject, fit, style } = forecast.profile
-  const { description, weather } = forecast.suggestion
+  const { description } = forecast.suggestion
 
   try {
     const generation = await openAI.images.generate({
@@ -189,7 +166,7 @@ const generateImageFromSuggestion = async (
       prompt: formatContent([
         "A colorful illustration in an anime style.",
         `In the foreground is a full-body pose of a ${subject.name} dressed in ${style.name} clothes that have been made to fit ${fit.name}, ${description}`,
-        `In the background is an outdoor scene with weather conditions like ${weather}`
+        `In the background is an outdoor scene that complements the foreground image.`
       ]),
       n: 1,
       size: "1024x1024",

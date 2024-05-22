@@ -5,7 +5,9 @@ import {
   jsonb,
   text,
   timestamp,
-  uuid
+  uuid,
+  integer,
+  decimal
 } from "drizzle-orm/pg-core"
 import type { WearLocation, WearProfile, WearSuggestion } from "~/lib/forecast"
 import type { WeatherForecast } from "~/lib/weather"
@@ -26,4 +28,14 @@ export const forecast = pgTable("forecast", {
   weather: json("weather").notNull().$type<WeatherForecast>(),
   suggestion: jsonb("suggestion").$type<WearSuggestion>(),
   imagePath: text("image_path")
+})
+
+export const city = pgTable("city", {
+  id: uuid("id").primaryKey(),
+  cityId: integer("city_id").unique().notNull(),
+  name: text("name").notNull(),
+  state: text("state"),
+  country: text("country").notNull(),
+  lon: decimal("lon").notNull(),
+  lat: decimal("lat").notNull()
 })

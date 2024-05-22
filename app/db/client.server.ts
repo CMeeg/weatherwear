@@ -1,6 +1,6 @@
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
-import { forecast } from "~/db/schema"
+import { forecast, city } from "~/db/schema"
 
 const connectionString = process.env.DATABASE_URL ?? ""
 
@@ -16,7 +16,8 @@ type DbClient = typeof db
 // TODO: Not happy with this - it's a bit cumbersome to work with and I only have one schema
 const dbSchema = {
   public: {
-    forecast
+    forecast,
+    city
   }
 }
 

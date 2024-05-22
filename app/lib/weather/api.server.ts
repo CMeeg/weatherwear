@@ -1,56 +1,25 @@
-import countryCodeLookup from "country-code-lookup"
 import { result } from "~/lib/core"
 import type { FuncResult } from "~/lib/core"
 import { defaultLocale } from "~/lib/i18n"
-import type { WeatherForecast } from "~/lib/weather/wttr.generated"
-
-const transformLocation = (location: string): string => {
-  if (!location) {
-    return ""
-  }
-
-  const parts = location.split(",")
-
-  if (parts.length < 2) {
-    return location
-  }
-
-  // We will assume that the first part is the city
-  const city = parts[0]?.trim() ?? ""
-
-  // We will assume that the last part is the country
-  let country = parts.pop()?.trim() ?? ""
-
-  if (country) {
-    // Try to convert the country to an ISO2 code, otherwise use the original value
-
-    const result = countryCodeLookup.byCountry(country)
-
-    if (result) {
-      country = result.iso2
-    }
-  } else {
-    return city
-  }
-
-  // Some locations includes states/regions, which can also cause issues so we are just going to take the city and country
-
-  return [city, country].join(",")
-}
+import type { WeatherForecast } from "~/lib/weather/openweathermap.generated"
+import type { City } from "~/lib/places"
 
 const createWeatherApi = () => {
   return {
     fetchForecast: async (
-      location: string,
+      city: City,
       culture?: string
     ): Promise<FuncResult<WeatherForecast, Error>> => {
       const requestCulture = culture ?? defaultLocale.culture
 
-      const weatherUrl = new URL("https://wttr.in")
-      weatherUrl.pathname = transformLocation(location)
+      const weatherUrl = new URL("https://api.openweathermap.org")
+      weatherUrl.pathname = "data/2.5/forecast"
       weatherUrl.search = new URLSearchParams({
+        id: city.cityId.toString(),
+        units: "metric",
+        cnt: "8",
         lang: requestCulture,
-        format: "j1"
+        appid: process.env.OPENWEATHER_API_KEY
       }).toString()
 
       try {
@@ -63,16 +32,6 @@ const createWeatherApi = () => {
         }
 
         const weather = (await weatherResponse.json()) as WeatherForecast
-        const areaName = weather.nearest_area?.[0]?.areaName?.[0]?.value ?? ""
-
-        if (
-          !areaName.length ||
-          !location.toLowerCase().includes(areaName.toLowerCase())
-        ) {
-          throw new Error(
-            `Nearest area "${areaName}" does not appear to match location "${location}".`
-          )
-        }
 
         return result.ok(weather)
       } catch (error) {

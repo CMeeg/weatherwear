@@ -3,6 +3,7 @@ import type { loader as forecastLoader } from "~/routes/forecast+/$slug"
 import {
   getWeatherIconUrl,
   weatherCode,
+  weatherId,
   weatherTheme,
   weatherSymbol
 } from "~/lib/weather"
@@ -35,6 +36,12 @@ const getForecastWeatherFromWeatherCode = (
   return getForecastWeather(weatherCode[code])
 }
 
+const getForecastWeatherFromWeatherId = (
+  id: number
+): Nullable<ForecastWeather> => {
+  return getForecastWeather(weatherId[id.toString()])
+}
+
 const useForecastWeather = (): Nullable<ForecastWeather> => {
   const loaderData = useRouteLoaderData<typeof forecastLoader>(
     "routes/forecast+/$slug"
@@ -63,8 +70,18 @@ const getWeatherSymbolFromCode = (code: string): Nullable<string> => {
   return weatherSymbol[codename]
 }
 
-const formatTime = (time: string): string => {
-  const hour = parseInt(time, 10) / 100
+const getWeatherSymbolFromId = (id: number): Nullable<string> => {
+  const codename = weatherId[id]
+
+  if (!codename) {
+    return null
+  }
+
+  return weatherSymbol[codename]
+}
+
+const formatTime = (datetime: string): string => {
+  const hour = new Date(datetime).getHours()
 
   return hour.toString().padStart(2, "0") + "00"
 }
@@ -72,8 +89,10 @@ const formatTime = (time: string): string => {
 export {
   getForecastWeather,
   getForecastWeatherFromWeatherCode,
+  getForecastWeatherFromWeatherId,
   useForecastWeather,
   getWeatherSymbolFromCode,
+  getWeatherSymbolFromId,
   formatTime
 }
 

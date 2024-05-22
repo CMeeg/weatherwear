@@ -14,6 +14,7 @@ const processEnvSchema = z.object({
   IMAGEKIT_ENDPOINT_URL: z.string(),
   MIN_LOG_LEVEL: z.string().optional(),
   OPENAI_API_KEY: z.string(),
+  OPENWEATHER_API_KEY: z.string(),
   STORAGE_CONNECTION_STRING: z.string(),
   STORAGE_CONTAINER_NAME: z.string(),
   STORAGE_URL: z.string()

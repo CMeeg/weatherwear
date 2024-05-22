@@ -4,7 +4,6 @@ import { migrate } from "drizzle-orm/postgres-js/migrator"
 import postgres from "postgres"
 
 dotenv.config()
-dotenv.config({ path: `.env.local`, override: true })
 
 const connectionString = process.env.DATABASE_URL ?? ""
 

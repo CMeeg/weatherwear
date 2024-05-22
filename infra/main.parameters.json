@@ -59,6 +59,11 @@
             "secret": true
           },
           {
+            "name": "OPENWEATHER_API_KEY",
+            "value": "${OPENWEATHER_API_KEY}",
+            "secret": true
+          },
+          {
             "name": "STORAGE_CONTAINER_NAME",
             "value": "${STORAGE_CONTAINER_NAME=forecast}"
           },

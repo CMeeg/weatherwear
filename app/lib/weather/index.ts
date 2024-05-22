@@ -1,4 +1,4 @@
-import type { WeatherForecast } from "~/lib/weather/wttr.generated"
+import type { WeatherForecast } from "~/lib/weather/openweathermap.generated"
 
 const temperatureUnit = {
   celcius: "celcius",
@@ -7,6 +7,7 @@ const temperatureUnit = {
 
 type TemperatureUnit = keyof typeof temperatureUnit
 
+// TODO: Align with OpenWeather https://openweathermap.org/weather-conditions
 const weatherCodename = {
   cloudy: "cloudy",
   fog: "fog",
@@ -95,6 +96,7 @@ const weatherSymbol: Record<WeatherCodename, string> = {
   [weatherCodename.very_cloudy]: "☁️"
 }
 
+// TODO: Get rid of these
 const weatherCode: Record<string, WeatherCodename> = {
   "113": weatherCodename.sunny,
   "116": weatherCodename.partly_cloudy,
@@ -146,6 +148,72 @@ const weatherCode: Record<string, WeatherCodename> = {
   "395": weatherCodename.heavy_snow_showers
 } as const
 
+// https://openweathermap.org/weather-conditions
+const weatherId: Record<string, WeatherCodename> = {
+  // Group 2xx: Thunderstorm
+  "200": weatherCodename.thundery_showers,
+  "201": weatherCodename.thundery_showers,
+  "202": weatherCodename.thundery_heavy_rain,
+  "210": weatherCodename.thundery_showers,
+  "211": weatherCodename.thundery_showers,
+  "212": weatherCodename.thundery_heavy_rain,
+  "221": weatherCodename.thundery_heavy_rain,
+  "230": weatherCodename.thundery_showers,
+  "231": weatherCodename.thundery_showers,
+  "232": weatherCodename.thundery_heavy_rain,
+  // Group 3xx: Drizzle
+  "300": weatherCodename.light_rain,
+  "301": weatherCodename.light_rain,
+  "302": weatherCodename.light_rain,
+  "310": weatherCodename.light_rain,
+  "311": weatherCodename.light_rain,
+  "312": weatherCodename.light_rain,
+  "313": weatherCodename.light_rain,
+  "314": weatherCodename.light_rain,
+  "321": weatherCodename.light_rain,
+  // Group 5xx: Rain
+  "500": weatherCodename.light_rain,
+  "501": weatherCodename.light_rain,
+  "502": weatherCodename.heavy_rain,
+  "503": weatherCodename.heavy_rain,
+  "504": weatherCodename.heavy_rain,
+  "511": weatherCodename.light_snow_showers,
+  "520": weatherCodename.light_rain,
+  "521": weatherCodename.light_rain,
+  "522": weatherCodename.heavy_rain,
+  "531": weatherCodename.heavy_rain,
+  // Group 6xx: Snow
+  "600": weatherCodename.light_snow,
+  "601": weatherCodename.light_snow,
+  "602": weatherCodename.heavy_snow,
+  "611": weatherCodename.light_sleet,
+  "612": weatherCodename.light_snow_showers,
+  "613": weatherCodename.light_sleet_showers,
+  "615": weatherCodename.light_snow_showers,
+  "616": weatherCodename.light_snow_showers,
+  "620": weatherCodename.light_snow_showers,
+  "621": weatherCodename.light_snow_showers,
+  "622": weatherCodename.heavy_snow_showers,
+  // Group 7xx: Atmosphere
+  "701": weatherCodename.fog,
+  "711": weatherCodename.fog,
+  "721": weatherCodename.fog,
+  "731": weatherCodename.fog,
+  "741": weatherCodename.fog,
+  "751": weatherCodename.fog,
+  "761": weatherCodename.fog,
+  "762": weatherCodename.fog,
+  "771": weatherCodename.thundery_heavy_rain,
+  "781": weatherCodename.thundery_heavy_rain,
+  // Group 800: Clear
+  "800": weatherCodename.sunny,
+  // Group 80x: Clouds
+  "801": weatherCodename.partly_cloudy,
+  "802": weatherCodename.partly_cloudy,
+  "803": weatherCodename.cloudy,
+  "804": weatherCodename.very_cloudy
+} as const
+
 function getWeatherIconUrl(codename: WeatherCodename) {
   return `/img/weather/${weatherIcon[codename]}`
 }
@@ -156,6 +224,7 @@ export {
   weatherIcon,
   weatherSymbol,
   weatherCode,
+  weatherId,
   weatherTheme,
   getWeatherIconUrl
 }

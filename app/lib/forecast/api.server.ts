@@ -12,6 +12,7 @@ import type {
 } from "~/lib/forecast"
 import type { WearForecastRequest } from "~/lib/forecast/request.server"
 import type { WeatherForecast } from "~/lib/weather"
+import type { City } from "~/lib/places"
 import { db, dbSchema } from "~/db/client.server"
 import {
   createBlobStorageClient,
@@ -137,12 +138,22 @@ const createWearForecastApi = () => {
     fetchForecastFromSlug,
     createForecast: async (
       forecastRequest: WearForecastRequest,
+      city: City,
       weather: WeatherForecast
     ): Promise<FuncResult<WearForecast>> => {
       // Validate the request
 
+      // TODO: Add `display_name` column to the city table and use it here
+      const cityName = [city.name]
+
+      if (city.state) {
+        cityName.push(city.state)
+      }
+
+      cityName.push(city.country)
+
       const location = await wearLocationSchema.safeParseAsync({
-        text: forecastRequest.location
+        text: cityName.join(", ")
       })
 
       if (!location.success) {
