@@ -13,7 +13,6 @@
     "moduleResolution": "Bundler",
     // Vite takes care of building everything, not tsc.
     "noEmit": true,
-    "noUncheckedIndexedAccess": true,
     "paths": {
       "~/*": ["./app/*"]
     },

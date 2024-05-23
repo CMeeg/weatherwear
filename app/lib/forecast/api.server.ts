@@ -143,17 +143,8 @@ const createWearForecastApi = () => {
     ): Promise<FuncResult<WearForecast>> => {
       // Validate the request
 
-      // TODO: Add `display_name` column to the city table and use it here
-      const cityName = [city.name]
-
-      if (city.state) {
-        cityName.push(city.state)
-      }
-
-      cityName.push(city.country)
-
       const location = await wearLocationSchema.safeParseAsync({
-        text: cityName.join(", ")
+        text: city.display_name
       })
 
       if (!location.success) {

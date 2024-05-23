@@ -31,21 +31,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const locations: FormListItem[] = []
 
-  cities.map((city) => {
-    // TODO: Add `display_name` column to the city table and use it here
-    const name = [city.name]
-
-    if (city.state) {
-      name.push(city.state)
-    }
-
-    name.push(city.country)
+  for (let i = 0; i < cities.length; i++) {
+    const city = cities[i]
 
     locations.push({
       id: city.id,
-      name: name.join(", ")
+      name: city.display_name
     })
-  })
+  }
 
   const result = {
     items: locations,

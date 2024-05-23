@@ -1,4 +1,4 @@
-import { eq, ilike } from "drizzle-orm"
+import { eq, ilike, or } from "drizzle-orm"
 import { result } from "~/lib/core"
 import type { FuncResult, Nullable } from "~/lib/core"
 import { db, dbSchema } from "~/db/client.server"
@@ -27,14 +27,16 @@ const createPlacesApi = () => {
     },
     searchCities: async (term: string): Promise<FuncResult<City[]>> => {
       try {
-        /*TODO:
-        - `ilike` is not going to give great results - try `fuzzystrmatch` (https://neon.tech/docs/extensions/pg-extensions) or `pg_trgm` (https://neon.tech/docs/extensions/pg_trgm)
-        - Will maybe need to normalize the search term and the city names - try `normalize` (https://www.postgresql.org/docs/13/functions-string.html#id-1.5.8.10.5.2.2.7.1.1.1) or `unaccent` (https://www.postgresql.org/docs/16/unaccent.html)
-        */
         const cities = await db
           .select()
           .from(dbSchema.public.city)
-          .where(ilike(dbSchema.public.city.name, `%${term}%`))
+          .where(
+            or(
+              ilike(dbSchema.public.city.name, `%${term}%`),
+              ilike(dbSchema.public.city.unaccented_name, `%${term}%`),
+              ilike(dbSchema.public.city.display_name, `%${term}%`)
+            )
+          )
           .limit(10)
 
         return result.ok(cities)
