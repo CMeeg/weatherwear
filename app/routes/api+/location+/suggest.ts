@@ -36,7 +36,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
     locations.push({
       id: city.id,
-      name: city.display_name
+      name: city.displayName
     })
   }
 

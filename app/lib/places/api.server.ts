@@ -33,8 +33,8 @@ const createPlacesApi = () => {
           .where(
             or(
               ilike(dbSchema.public.city.name, `%${term}%`),
-              ilike(dbSchema.public.city.unaccented_name, `%${term}%`),
-              ilike(dbSchema.public.city.display_name, `%${term}%`)
+              ilike(dbSchema.public.city.unaccentedName, `%${term}%`),
+              ilike(dbSchema.public.city.displayName, `%${term}%`)
             )
           )
           .limit(10)

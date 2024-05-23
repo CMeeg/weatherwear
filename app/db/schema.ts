@@ -36,8 +36,8 @@ export const city = pgTable("city", {
   name: text("name").notNull(),
   state: text("state"),
   country: text("country").notNull(),
-  display_name: text("display_name").notNull(),
-  unaccented_name: text("unaccented_name").notNull(),
+  displayName: text("display_name").notNull(),
+  unaccentedName: text("unaccented_name").notNull(),
   lon: decimal("lon").notNull(),
   lat: decimal("lat").notNull()
 })

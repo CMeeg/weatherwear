@@ -144,7 +144,7 @@ const createWearForecastApi = () => {
       // Validate the request
 
       const location = await wearLocationSchema.safeParseAsync({
-        text: city.display_name
+        text: city.displayName
       })
 
       if (!location.success) {
