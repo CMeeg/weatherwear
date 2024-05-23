@@ -1,10 +1,8 @@
 {
-  "id": "39805d2f-1af9-4f6b-95b2-caccb82cd8f2",
-  "prevId": "965cf944-0b59-4051-87a7-1ffa2532ae39",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "city": {
+    "public.city": {
       "name": "city",
       "schema": "",
       "columns": {
@@ -57,14 +55,14 @@
       "uniqueConstraints": {
         "city_city_id_unique": {
           "name": "city_city_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "city_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "forecast": {
+    "public.forecast": {
       "name": "forecast",
       "schema": "",
       "columns": {
@@ -136,10 +134,10 @@
       "uniqueConstraints": {
         "forecast_url_slug_unique": {
           "name": "forecast_url_slug_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "url_slug"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     }
@@ -147,8 +145,10 @@
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "39805d2f-1af9-4f6b-95b2-caccb82cd8f2",
+  "prevId": "965cf944-0b59-4051-87a7-1ffa2532ae39"
 }
