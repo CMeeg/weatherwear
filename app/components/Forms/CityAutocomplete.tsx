@@ -47,7 +47,7 @@ function CityAutocomplete<T extends object>({
           locationsFetcher.submit(
             { q: input },
             {
-              action: "/api/city/suggest",
+              action: "/api/location/suggest",
               method: "GET",
               debounceTimeout: 400
             }

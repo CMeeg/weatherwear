@@ -1,10 +1,11 @@
 import type { LoaderFunctionArgs } from "@remix-run/node"
 import { json } from "@remix-run/node"
-import { defaultLocale } from "~/lib/i18n"
+import { createPlacesApi } from "~/lib/places/api.server"
 import type { FormListItem } from "~/lib/forms"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   // Get the query from the URL
+
   const url = new URL(request.url)
   const query = url.searchParams.get("q")
 
@@ -15,39 +16,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     })
   }
 
-  // Fetch places from the Google Places Autocomplete API
-  // https://developers.google.com/maps/documentation/places/web-service/autocomplete
+  // Search for cities in the db
 
-  const placesUrl = new URL(
-    "https://maps.googleapis.com/maps/api/place/autocomplete/json"
-  )
+  const [cities, citiesError] = await createPlacesApi().searchCities(query)
 
-  placesUrl.search = new URLSearchParams({
-    input: query,
-    language: defaultLocale.culture,
-    types: "(cities)",
-    key: process.env.GOOGLE_MAPS_API_KEY ?? ""
-  }).toString()
-
-  const locations: FormListItem[] = []
-
-  try {
-    const placesResponse = await fetch(placesUrl.toString())
-
-    if (!placesResponse.ok) {
-      throw new Error("Failed to fetch places.")
-    }
-
-    const places =
-      (await placesResponse.json()) as google.maps.places.AutocompleteResponse
-
-    places.predictions.map((prediction) => {
-      locations.push({
-        id: prediction.place_id,
-        name: prediction.description
-      })
-    })
-  } catch (error) {
+  if (citiesError) {
     return json({
       items: undefined,
       error: "There was a problem fetching locations. Please try again."
@@ -55,6 +28,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   // Return the locations data
+
+  const locations: FormListItem[] = []
+
+  for (let i = 0; i < cities.length; i++) {
+    const city = cities[i]
+
+    locations.push({
+      id: city.id,
+      name: city.display_name
+    })
+  }
 
   const result = {
     items: locations,

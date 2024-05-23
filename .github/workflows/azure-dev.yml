@@ -52,7 +52,6 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       APP_ENV: ${{ needs.init.outputs.APP_ENV }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
       IMAGEKIT_ENDPOINT_URL: ${{ vars.IMAGEKIT_ENDPOINT_URL }}
       MIN_LOG_LEVEL: ${{ vars.MIN_LOG_LEVEL }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

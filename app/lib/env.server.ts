@@ -10,7 +10,6 @@ const processEnvSchema = z.object({
   BUILD_ID: z.string().optional(),
   CDN_URL: z.string().optional(),
   DATABASE_URL: z.string(),
-  GOOGLE_MAPS_API_KEY: z.string(),
   IMAGEKIT_ENDPOINT_URL: z.string(),
   MIN_LOG_LEVEL: z.string().optional(),
   OPENAI_API_KEY: z.string(),
