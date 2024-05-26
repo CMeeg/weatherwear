@@ -1,17 +1,16 @@
 import { defer } from "@remix-run/node"
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node"
-import { useLoaderData, useLocation, Await } from "@remix-run/react"
+import { useLoaderData, Await } from "@remix-run/react"
 import { Suspense } from "react"
-import { useEventSource } from "remix-utils/sse/react"
 import { Image } from "@unpic/react"
 import {
-  getForecastWeatherFromWeatherId,
-  getWeatherSymbolFromId,
-  formatTime
+  getForecastWeather,
+  getForecastWeatherHourly
 } from "~/lib/forecast/weather"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
 import { createWearForecastCompletionApi } from "~/lib/forecast/completion.server"
-import type { ForecastCompletionEventStatus } from "~/lib/forecast/completion.server"
+import { useForecastCompletionEvent } from "~/lib/forecast/event"
+import type { ForecastCompletionEventStatus } from "~/lib/forecast"
 import { Cloud } from "~/components/Cloud/Cloud"
 import { LinkButton } from "~/components/LinkButton/LinkButton"
 import css from "./Forecast.module.css"
@@ -42,27 +41,11 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     throw new Response("Forecast not found.", { status: 404 })
   }
 
-  // Get the weather from the forecast
-
-  // TODO: Need to work out some kind of "average" weather for the day
-  const forecastWeatherId = forecast.weather.list[4]?.weather[0]?.id ?? 0
-
-  const weather = getForecastWeatherFromWeatherId(forecastWeatherId)
-
-  const hourlyWeather = forecast.weather.list.map((hourly) => {
-    return {
-      time: formatTime(hourly.dt_txt),
-      chance_of_rain: hourly.pop * 100,
-      temp_c: Math.round(hourly.main.temp * 2) / 2,
-      weather_description: hourly.weather[0]?.description ?? null,
-      weather_symbol: getWeatherSymbolFromId(hourly.weather[0]?.id ?? 0)
-    }
-  })
-
   // Get the status messages
 
   // TODO: Put these somewhere else
   const statusMessages: Record<ForecastCompletionEventStatus, string> = {
+    fetching_weather: "Getting the weather...",
     fetching_suggestion: "Considering your options...",
     generating_image: "Creating your look...",
     completed: "All done!",
@@ -84,15 +67,18 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
         throw new Error("Error completing forecast.")
       }
 
+      // Get the weather from the forecast
+
       return {
+        weather: getForecastWeather(completeForecast.weather),
+        hourlyWeather: getForecastWeatherHourly(completeForecast.weather),
         text: completeForecast.suggestion?.advice ?? "",
         image_url: completeForecast.imagePath
       }
     })
 
   return defer({
-    weather,
-    hourlyWeather,
+    weather: getForecastWeather(forecast.weather),
     statusMessages,
     completion
   })
@@ -110,22 +96,16 @@ export const meta: MetaFunction = () => {
 }
 
 export default function Index() {
-  const { hourlyWeather, statusMessages, completion } =
-    useLoaderData<typeof loader>()
+  const { statusMessages, completion } = useLoaderData<typeof loader>()
 
-  const location = useLocation()
+  const completionEvent = useForecastCompletionEvent()
 
-  const status = useEventSource(`${location.pathname}/completion`, {
-    event: "status"
-  })
+  const status = completionEvent?.status ?? "fetching_suggestion"
 
   const ForecastCompletionStatus = () => {
     return (
       <div className={css.status}>
-        <p>
-          {statusMessages[status as ForecastCompletionEventStatus] ??
-            statusMessages["fetching_suggestion"]}
-        </p>
+        <p>{statusMessages[status]}</p>
       </div>
     )
   }
@@ -175,7 +155,7 @@ export default function Index() {
                       <thead>
                         <tr>
                           <th></th>
-                          {hourlyWeather.map((hourly) => (
+                          {forecast.hourlyWeather.map((hourly) => (
                             <th key={hourly.time} scope="col">
                               {hourly.time}
                             </th>
@@ -185,7 +165,7 @@ export default function Index() {
                       <tbody>
                         <tr>
                           <th scope="row">Weather</th>
-                          {hourlyWeather.map((hourly) => (
+                          {forecast.hourlyWeather.map((hourly) => (
                             <td key={hourly.time}>
                               <span title={hourly.weather_description ?? ""}>
                                 {hourly.weather_symbol}
@@ -197,13 +177,13 @@ export default function Index() {
                           <th scope="row" title="Temperature (Celcius)">
                             Temperature
                           </th>
-                          {hourlyWeather.map((hourly) => (
+                          {forecast.hourlyWeather.map((hourly) => (
                             <td key={hourly.time}>{`${hourly.temp_c}°C`}</td>
                           ))}
                         </tr>
                         <tr>
                           <th scope="row">Chance of rain</th>
-                          {hourlyWeather.map((hourly) => (
+                          {forecast.hourlyWeather.map((hourly) => (
                             <td
                               key={hourly.time}
                             >{`${hourly.chance_of_rain}%`}</td>

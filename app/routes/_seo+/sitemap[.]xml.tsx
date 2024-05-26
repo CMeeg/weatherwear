@@ -11,7 +11,7 @@ type Route = Routes[keyof Routes]
 
 function findRealParentId(route: Route, routes: Routes) {
   if (route.parentId) {
-    const parentRoute = routes[route.parentId]!
+    const parentRoute = routes[route.parentId]
 
     if (typeof parentRoute.path !== "undefined") {
       return parentRoute.id
@@ -32,7 +32,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       ))) as ServerBuild
 
   for (const key in build.routes) {
-    const route = build.routes[key]!
+    const route = build.routes[key]
     route.parentId = findRealParentId(route, build.routes)
   }
 

@@ -1,11 +1,7 @@
 import { z } from "zod"
 import { forecast } from "~/db/schema"
-
-const wearLocationSchema = z.object({
-  text: z.string()
-})
-
-type WearLocation = z.infer<typeof wearLocationSchema>
+import type { ForecastWeather } from "./weather"
+import type { Nullable, ValueOf } from "~/lib/core"
 
 const wearProfileAttributeItem = z.object({
   codename: z.string(),
@@ -46,19 +42,42 @@ type WearSuggestion = z.infer<typeof wearSuggestionSchema>
 
 type WearForecast = typeof forecast.$inferSelect
 
+const forecastCompletionEventName = "completion" as const
+
+const forecastCompletionEventStatus = {
+  completed: "completed",
+  fetchingWeather: "fetching_weather",
+  fetchingSuggestion: "fetching_suggestion",
+  generatingImage: "generating_image",
+  failed: "failed"
+} as const
+
+type ForecastCompletionEventStatus = ValueOf<
+  typeof forecastCompletionEventStatus
+>
+
+interface ForecastCompletionEvent {
+  id: string
+  urlSlug: string
+  status: ForecastCompletionEventStatus
+  weather: Nullable<ForecastWeather>
+}
+
 export {
-  wearLocationSchema,
   wearProfileSchema,
   wearProfileAttribute,
   wearProfileAttributeItem,
-  wearSuggestionSchema
+  wearSuggestionSchema,
+  forecastCompletionEventName,
+  forecastCompletionEventStatus
 }
 
 export type {
-  WearLocation,
   WearProfile,
   WearProfileAttribute,
   WearProfileAttributeItem,
   WearSuggestion,
-  WearForecast
+  WearForecast,
+  ForecastCompletionEvent,
+  ForecastCompletionEventStatus
 }

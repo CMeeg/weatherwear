@@ -4,15 +4,14 @@ import { v4 as uuid } from "uuid"
 import slugify from "@sindresorhus/slugify"
 import { result } from "~/lib/core"
 import type { Nullable, FuncResult } from "~/lib/core"
-import { wearLocationSchema, wearProfileSchema } from "~/lib/forecast"
+import { wearProfileSchema } from "~/lib/forecast"
 import type {
   WearForecast,
   WearProfileAttribute,
   WearProfileAttributeItem
 } from "~/lib/forecast"
 import type { WearForecastRequest } from "~/lib/forecast/request.server"
-import type { WeatherForecast } from "~/lib/weather"
-import type { City } from "~/lib/places"
+import { createPlacesApi } from "~/lib/places/api.server"
 import { db, dbSchema } from "~/db/client.server"
 import {
   createBlobStorageClient,
@@ -31,7 +30,7 @@ const fetchForecastFromSlug = async (
 
     if (existing.length > 0) {
       // urlSlug has a unique constraint so there will be at most one
-      return result.ok(existing[0]!)
+      return result.ok(existing[0])
     }
 
     return result.ok(null)
@@ -81,7 +80,7 @@ const updateForecast = async (
       .where(eq(dbSchema.public.forecast.id, id))
       .returning()
 
-    return result.ok(updated[0]!)
+    return result.ok(updated[0])
   } catch (error) {
     // TODO: TypeScript erorrs!
     const message = error instanceof Error ? error.message : "Unknown error"
@@ -137,19 +136,26 @@ const createWearForecastApi = () => {
   return {
     fetchForecastFromSlug,
     createForecast: async (
-      forecastRequest: WearForecastRequest,
-      city: City,
-      weather: WeatherForecast
+      forecastRequest: WearForecastRequest
     ): Promise<FuncResult<WearForecast>> => {
-      // Validate the request
+      // Fetch and validate provided location
 
-      const location = await wearLocationSchema.safeParseAsync({
-        text: city.displayName
-      })
+      const [city, cityError] = await createPlacesApi().fetchCity(
+        forecastRequest.location
+      )
 
-      if (!location.success) {
-        return result.error(location.error)
+      if (cityError) {
+        return result.error(cityError)
       }
+
+      if (!city) {
+        return result.error({
+          name: "location",
+          message: `City with ID ${forecastRequest.location} not found.`
+        })
+      }
+
+      // Validate the profile
 
       const profile = await wearProfileSchema.safeParseAsync({
         subject: parseProfileAttribute(forecastRequest, "subject"),
@@ -166,7 +172,7 @@ const createWearForecastApi = () => {
       const date = format(new Date(), "yyyy-MM-dd")
 
       const urlSlug = slugify(
-        `${profile.data.subject.name} in ${location.data.text} wearing ${profile.data.style.name} clothes for ${profile.data.fit.name} on ${date}`
+        `${profile.data.subject.name} in ${city.displayName} wearing ${profile.data.style.name} clothes for ${profile.data.fit.name} on ${date}`
       )
 
       // Check if a forecast with the URL slug already exists and return that if so
@@ -187,15 +193,14 @@ const createWearForecastApi = () => {
           .insert(dbSchema.public.forecast)
           .values({
             id: uuid(),
-            location: location.data,
             date,
-            urlSlug: urlSlug,
-            profile: profile.data,
-            weather
+            cityId: city.id,
+            urlSlug,
+            profile: profile.data
           })
           .returning()
 
-        return result.ok(forecast[0]!)
+        return result.ok(forecast[0])
       } catch (error) {
         // TODO: TypeScript erorrs!
         const message = error instanceof Error ? error.message : "Unknown error"

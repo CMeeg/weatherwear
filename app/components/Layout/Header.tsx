@@ -1,14 +1,18 @@
-import { Link } from "@remix-run/react"
+import { Link, useLocation } from "@remix-run/react"
 import { clsx } from "clsx"
 import { useForecastWeather } from "~/lib/forecast/weather"
 import { getCdnUrl } from "~/lib/url"
 import css from "./Header.module.css"
 
-interface HeaderIconProps {
-  weather: ReturnType<typeof useForecastWeather>
-}
+const DefaultIcon = () => (
+  <svg>
+    <use href="/img/sprite.svg#weather-app" />
+  </svg>
+)
 
-function HeaderIcon({ weather }: HeaderIconProps) {
+const WeatherIcon = () => {
+  const weather = useForecastWeather()
+
   if (weather) {
     return (
       <img
@@ -20,11 +24,17 @@ function HeaderIcon({ weather }: HeaderIconProps) {
     )
   }
 
-  return (
-    <svg>
-      <use href="/img/sprite.svg#weather-app" />
-    </svg>
-  )
+  return <DefaultIcon />
+}
+
+function HeaderIcon() {
+  const location = useLocation()
+
+  if (location.pathname.startsWith("/forecast/")) {
+    return <WeatherIcon />
+  }
+
+  return <DefaultIcon />
 }
 
 interface HeaderProps {
@@ -32,8 +42,6 @@ interface HeaderProps {
 }
 
 function Header({ className }: HeaderProps) {
-  const weather = useForecastWeather()
-
   return (
     <header className={clsx([css.header, className])}>
       <h1 className={css.weatherwear}>
@@ -44,7 +52,7 @@ function Header({ className }: HeaderProps) {
           </svg>
         </Link>
         <span className={css.icon}>
-          <HeaderIcon weather={weather} />
+          <HeaderIcon />
         </span>
       </h1>
     </header>

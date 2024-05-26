@@ -12,9 +12,7 @@ import {
   wearForecastRequestValidator,
   getForecastRequestFormProps
 } from "~/lib/forecast/request.server"
-import { createPlacesApi } from "~/lib/places/api.server"
 import { createWearForecastApi } from "~/lib/forecast/api.server"
-import { createWeatherApi } from "~/lib/weather/api.server"
 import { Cloud } from "~/components/Cloud/Cloud"
 import { Fieldset, Legend } from "~/components/Forms/Fieldset"
 import { ValidationSummary } from "~/components/Forms/ValidationSummary"
@@ -40,46 +38,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const forecastRequest = validationResult.data
 
-  // Fetch and validate weather forecast for provided location
-
-  const [city, cityError] = await createPlacesApi().fetchCity(
-    forecastRequest.location
-  )
-
-  if (!city || cityError) {
-    return {
-      errors: {
-        location:
-          "Sorry we couldn't find the selected location. Please try again."
-      }
-    }
-  }
-
-  const weatherApi = createWeatherApi()
-
-  const [weatherForecast, weatherForecastError] =
-    await weatherApi.fetchForecast(city)
-
-  if (weatherForecastError) {
-    // TODO: There seems to be a bug where if this error is triggered you can't resubmit the form - like the error persists
-    // TODO: Be a bit smarter about error messages depending on type of error returned
-    return {
-      errors: {
-        location:
-          "Sorry we couldn't fetch the weather for that location. Try searching for your nearest large town or city instead."
-      }
-    }
-  }
-
   // Create the forecast and redirect over to the forecast page
 
   const forecastApi = createWearForecastApi()
 
-  const [forecast, forecastError] = await forecastApi.createForecast(
-    forecastRequest,
-    city,
-    weatherForecast
-  )
+  const [forecast, forecastError] =
+    await forecastApi.createForecast(forecastRequest)
 
   if (forecastError) {
     // TODO: Be a bit smarter about error messages depending on type of error returned

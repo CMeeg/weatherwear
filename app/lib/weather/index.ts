@@ -96,58 +96,6 @@ const weatherSymbol: Record<WeatherCodename, string> = {
   [weatherCodename.very_cloudy]: "☁️"
 }
 
-// TODO: Get rid of these
-const weatherCode: Record<string, WeatherCodename> = {
-  "113": weatherCodename.sunny,
-  "116": weatherCodename.partly_cloudy,
-  "119": weatherCodename.cloudy,
-  "122": weatherCodename.very_cloudy,
-  "143": weatherCodename.fog,
-  "176": weatherCodename.light_showers,
-  "179": weatherCodename.light_sleet_showers,
-  "182": weatherCodename.light_sleet,
-  "185": weatherCodename.light_sleet,
-  "200": weatherCodename.thundery_showers,
-  "227": weatherCodename.light_snow,
-  "230": weatherCodename.heavy_snow,
-  "248": weatherCodename.fog,
-  "260": weatherCodename.fog,
-  "263": weatherCodename.light_showers,
-  "266": weatherCodename.light_rain,
-  "281": weatherCodename.light_sleet,
-  "284": weatherCodename.light_sleet,
-  "293": weatherCodename.light_rain,
-  "296": weatherCodename.light_rain,
-  "299": weatherCodename.heavy_showers,
-  "302": weatherCodename.heavy_rain,
-  "305": weatherCodename.heavy_showers,
-  "308": weatherCodename.heavy_rain,
-  "311": weatherCodename.light_sleet,
-  "314": weatherCodename.light_sleet,
-  "317": weatherCodename.light_sleet,
-  "320": weatherCodename.light_snow,
-  "323": weatherCodename.light_snow_showers,
-  "326": weatherCodename.light_snow_showers,
-  "329": weatherCodename.heavy_snow,
-  "332": weatherCodename.heavy_snow,
-  "335": weatherCodename.heavy_snow_showers,
-  "338": weatherCodename.heavy_snow,
-  "350": weatherCodename.light_sleet,
-  "353": weatherCodename.light_showers,
-  "356": weatherCodename.heavy_showers,
-  "359": weatherCodename.heavy_rain,
-  "362": weatherCodename.light_sleet_showers,
-  "365": weatherCodename.light_sleet_showers,
-  "368": weatherCodename.light_snow_showers,
-  "371": weatherCodename.heavy_snow_showers,
-  "374": weatherCodename.light_sleet_showers,
-  "377": weatherCodename.light_sleet,
-  "386": weatherCodename.thundery_showers,
-  "389": weatherCodename.thundery_heavy_rain,
-  "392": weatherCodename.thundery_snow_showers,
-  "395": weatherCodename.heavy_snow_showers
-} as const
-
 // https://openweathermap.org/weather-conditions
 const weatherId: Record<string, WeatherCodename> = {
   // Group 2xx: Thunderstorm
@@ -223,7 +171,6 @@ export {
   weatherCodename,
   weatherIcon,
   weatherSymbol,
-  weatherCode,
   weatherId,
   weatherTheme,
   getWeatherIconUrl

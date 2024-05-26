@@ -49,7 +49,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 
   return json(result, {
-    // Add a little bit of caching so when the user backspaces a value in the input the browser has a local copy of the data and doesn't make a request to the server for it
-    headers: { "Cache-Control": "max-age=60" }
+    // Responses can be cached because the data is coming directly from the db and does not change frequently, if at all
+    headers: { "Cache-Control": "max-age=3600" }
   })
 }

@@ -2,12 +2,12 @@ import { useRouteLoaderData } from "@remix-run/react"
 import type { loader as forecastLoader } from "~/routes/forecast+/$slug"
 import {
   getWeatherIconUrl,
-  weatherCode,
   weatherId,
   weatherTheme,
   weatherSymbol
 } from "~/lib/weather"
-import type { WeatherCodename } from "~/lib/weather"
+import { useForecastCompletionEvent } from "~/lib/forecast/event"
+import type { WeatherCodename, WeatherForecast } from "~/lib/weather"
 import type { Nullable } from "~/lib/core"
 
 interface ForecastWeather {
@@ -16,7 +16,15 @@ interface ForecastWeather {
   theme: string
 }
 
-const getForecastWeather = (
+interface ForecastWeatherHourlySummary {
+  time: string
+  chance_of_rain: number
+  temp_c: number
+  weather_description: Nullable<string>
+  weather_symbol: Nullable<string>
+}
+
+const getForecastWeatherFromCodename = (
   codename?: WeatherCodename
 ): Nullable<ForecastWeather> => {
   if (!codename) {
@@ -30,16 +38,19 @@ const getForecastWeather = (
   }
 }
 
-const getForecastWeatherFromWeatherCode = (
-  code: string
-): Nullable<ForecastWeather> => {
-  return getForecastWeather(weatherCode[code])
-}
-
 const getForecastWeatherFromWeatherId = (
   id: number
 ): Nullable<ForecastWeather> => {
-  return getForecastWeather(weatherId[id.toString()])
+  return getForecastWeatherFromCodename(weatherId[id.toString()])
+}
+
+const getForecastWeather = (
+  weather: Nullable<WeatherForecast>
+): Nullable<ForecastWeather> => {
+  // TODO: Need to work out some kind of "average" weather for the day
+  const weatherId = weather?.list[4]?.weather[0]?.id ?? 0
+
+  return getForecastWeatherFromWeatherId(weatherId)
 }
 
 const useForecastWeather = (): Nullable<ForecastWeather> => {
@@ -47,27 +58,19 @@ const useForecastWeather = (): Nullable<ForecastWeather> => {
     "routes/forecast+/$slug"
   )
 
-  const weather = loaderData?.weather
+  const loaderWeather = loaderData?.weather
 
-  if (!weather) {
-    return null
+  const completionEvent = useForecastCompletionEvent()
+
+  if (loaderWeather) {
+    return loaderWeather
   }
 
-  return weather
-}
-
-const getWeatherSymbolFromCode = (code: string): Nullable<string> => {
-  if (!code) {
-    return null
+  if (completionEvent?.weather) {
+    return completionEvent.weather
   }
 
-  const codename = weatherCode[code]
-
-  if (!codename) {
-    return null
-  }
-
-  return weatherSymbol[codename]
+  return null
 }
 
 const getWeatherSymbolFromId = (id: number): Nullable<string> => {
@@ -80,19 +83,33 @@ const getWeatherSymbolFromId = (id: number): Nullable<string> => {
   return weatherSymbol[codename]
 }
 
+const getForecastWeatherHourly = (
+  weather: Nullable<WeatherForecast>
+): ForecastWeatherHourlySummary[] => {
+  return (weather?.list ?? []).map((hourly) => {
+    return {
+      time: formatTime(hourly.dt_txt),
+      chance_of_rain: hourly.pop * 100,
+      temp_c: Math.round(hourly.main.temp * 2) / 2,
+      weather_description: hourly.weather[0]?.description ?? null,
+      weather_symbol: getWeatherSymbolFromId(hourly.weather[0]?.id ?? 0)
+    }
+  })
+}
+
 const formatTime = (datetime: string): string => {
   const hour = new Date(datetime).getHours()
 
-  return hour.toString().padStart(2, "0") + "00"
+  return `${hour.toString().padStart(2, "0")}00`
 }
 
 export {
   getForecastWeather,
-  getForecastWeatherFromWeatherCode,
+  getForecastWeatherFromCodename,
   getForecastWeatherFromWeatherId,
   useForecastWeather,
-  getWeatherSymbolFromCode,
   getWeatherSymbolFromId,
+  getForecastWeatherHourly,
   formatTime
 }
 

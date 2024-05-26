@@ -47,7 +47,7 @@ const getForecastRequestFormProps = () => {
 }
 
 const wearForecastRequestSchema = z.object({
-  location: z.string().min(1, { message: "Where are you?" }),
+  location: z.string().uuid("Where are you?"),
   subject: z
     .string()
     .min(1, { message: "What are you?" })

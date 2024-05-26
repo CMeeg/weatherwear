@@ -14,7 +14,7 @@ const createPlacesApi = () => {
           .where(eq(dbSchema.public.city.id, id))
 
         if (city.length > 0) {
-          return result.ok(city[0]!)
+          return result.ok(city[0])
         }
 
         return result.ok(null)
